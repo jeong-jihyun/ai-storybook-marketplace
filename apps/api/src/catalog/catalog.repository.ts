@@ -18,6 +18,7 @@ export interface BookRecord {
   description: string;
   keywords: string[];
   coverImageKey: string;
+  storeProductId: string | null;
   price: number;
   ageMin: number;
   ageMax: number;
@@ -55,6 +56,7 @@ export interface CatalogRepository {
   listCategories(): Promise<CategoryRecord[]>;
   findPublishedBooks(query: BookQuery): Promise<{ rows: BookRecord[]; total: number }>;
   findBookById(id: string): Promise<BookRecord | null>;
+  findBookByProductId(productId: string): Promise<BookRecord | null>;
   findPages(bookId: string, fromPage: number, toPage: number): Promise<PageRecord[]>;
 }
 

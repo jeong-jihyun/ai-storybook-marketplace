@@ -20,6 +20,7 @@ export class BookEntity {
   @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'text', array: true, default: () => "'{}'" }) keywords: string[];
   @Column({ name: 'cover_image_key', type: 'text', nullable: true }) coverImageKey: string | null;
+  @Column({ name: 'store_product_id', type: 'varchar', length: 100, nullable: true }) storeProductId: string | null;
   @Column({ type: 'int' }) price: number;
   @Column({ name: 'age_min', type: 'smallint', nullable: true }) ageMin: number | null;
   @Column({ name: 'age_max', type: 'smallint', nullable: true }) ageMax: number | null;

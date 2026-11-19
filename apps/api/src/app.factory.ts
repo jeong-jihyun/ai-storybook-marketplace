@@ -9,6 +9,7 @@ import { resolve } from 'node:path';
 import { AppModule } from './app.module';
 import { ASSET_PREFIX } from './common/asset-url';
 import { AllExceptionsFilter } from './common/http-exception.filter';
+import type { PaymentProvider } from './commerce/providers/payment-provider';
 
 /** storage 폴더 위치 (로컬 Object Storage 대용) */
 export function storageDir(): string {
@@ -16,8 +17,8 @@ export function storageDir(): string {
   return candidates.find((p): p is string => !!p && existsSync(p)) ?? resolve(__dirname, '../storage');
 }
 
-export async function createApp(options: { databaseUrl?: string; logger?: boolean } = {}): Promise<INestApplication> {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule.register(options.databaseUrl ?? process.env.DATABASE_URL), {
+export async function createApp(options: { databaseUrl?: string; logger?: boolean; providers?: PaymentProvider[] } = {}): Promise<INestApplication> {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule.register(options.databaseUrl ?? process.env.DATABASE_URL, options.providers), {
     logger: options.logger === false ? false : ['error', 'warn', 'log'],
   });
   app.enableCors({ origin: true });
@@ -29,8 +30,9 @@ export async function createApp(options: { databaseUrl?: string; logger?: boolea
 
   const doc = new DocumentBuilder()
     .setTitle('AI 동화책 마켓 API')
-    .setDescription('AI 생성 동화책 판매 모바일 앱 백엔드 (1단계: 카탈로그)')
-    .setVersion('0.1.0')
+    .setDescription('AI 생성 동화책 판매 모바일 앱 백엔드 (2단계: 회원·주문·결제 검증·구매 권한)')
+    .setVersion('0.2.0')
+    .addBearerAuth()
     .build();
   SwaggerModule.setup('api/docs', app, SwaggerModule.createDocument(app, doc));
 

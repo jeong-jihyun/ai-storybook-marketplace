@@ -9,6 +9,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Pressable } from 'react-native';
 import { ApiRequestError } from '../services/api';
+import { useSession } from '../store/session';
 import { colors, fonts, MIN_TOUCH } from '../theme';
 
 // SCR-001 스플래시: 글꼴·초기 설정이 끝날 때까지 시작 화면을 유지한다.
@@ -38,12 +39,19 @@ export default function RootLayout() {
     () => new QueryClient({ defaultOptions: { queries: { staleTime: 60_000, retry, refetchOnWindowFocus: false } } }),
   );
   const [loaded, error] = useFonts({ Jua_400Regular, GowunDodum_400Regular });
+  const hydrated = useSession((s) => s.hydrated);
 
+  // 저장된 로그인 정보 불러오기 (스플래시가 떠 있는 동안)
   useEffect(() => {
-    if (loaded || error) SplashScreen.hideAsync().catch(() => undefined);
-  }, [loaded, error]);
+    void useSession.getState().hydrate();
+  }, []);
 
-  if (!loaded && !error) return null;
+  const ready = (loaded || !!error) && hydrated;
+  useEffect(() => {
+    if (ready) SplashScreen.hideAsync().catch(() => undefined);
+  }, [ready]);
+
+  if (!ready) return null;
 
   return (
     <QueryClientProvider client={client}>
@@ -64,6 +72,13 @@ export default function RootLayout() {
         <Stack.Screen name="book/[id]/index" options={{ title: '' }} />
         <Stack.Screen name="book/[id]/preview" options={{ title: '무료 미리보기' }} />
         <Stack.Screen name="category/[slug]" options={{ title: '' }} />
+        <Stack.Screen name="read/[bookId]" options={{ title: '' }} />
+        <Stack.Screen name="login" options={{ title: '로그인' }} />
+        <Stack.Screen name="signup" options={{ title: '보호자 회원가입' }} />
+        <Stack.Screen name="checkout/[bookId]" options={{ title: '주문 확인' }} />
+        <Stack.Screen name="checkout/result" options={{ title: '결제 결과' }} />
+        <Stack.Screen name="orders" options={{ title: '주문·결제 내역' }} />
+        <Stack.Screen name="account" options={{ title: '계정 관리' }} />
       </Stack>
     </QueryClientProvider>
   );

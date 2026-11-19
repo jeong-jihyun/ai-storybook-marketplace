@@ -11,6 +11,7 @@ const toRecord = (b: BookEntity): BookRecord => ({
   description: b.description ?? '',
   keywords: b.keywords ?? [],
   coverImageKey: b.coverImageKey ?? '',
+  storeProductId: b.storeProductId ?? null,
   price: b.price,
   ageMin: b.ageMin ?? 0,
   ageMax: b.ageMax ?? 99,
@@ -92,6 +93,11 @@ export class TypeOrmCatalogRepository implements CatalogRepository {
 
   async findBookById(id: string) {
     const b = await this.ds.getRepository(BookEntity).findOne({ where: { id }, relations: { categories: true } });
+    return b ? toRecord(b) : null;
+  }
+
+  async findBookByProductId(productId: string) {
+    const b = await this.ds.getRepository(BookEntity).findOne({ where: { storeProductId: productId }, relations: { categories: true } });
     return b ? toRecord(b) : null;
   }
 

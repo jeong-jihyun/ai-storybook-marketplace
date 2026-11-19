@@ -33,6 +33,9 @@ export interface BookDetail extends BookSummary {
   status: BookStatus;
   /** 지금 구매 가능한지 (PUBLISHED 일 때만 true) */
   purchasable: boolean;
+  /** 로그인한 사용자가 이미 산 책인지 (로그인 안 했으면 false) */
+  owned: boolean;
+  storeProductId: string | null;
 }
 
 export interface BookPage {
@@ -70,4 +73,63 @@ export interface ApiError {
   statusCode: number;
   code: string;
   message: string;
+}
+
+// ───── 2단계: 회원·주문·결제·서재 ─────
+
+export interface Me {
+  id: string;
+  email: string;
+  nickname: string | null;
+  createdAt: string;
+}
+
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  user: Me;
+}
+
+export type PaymentProviderName = 'TEST' | 'GOOGLE_PLAY' | 'APPLE';
+export type OrderStatus = 'PENDING' | 'PAID' | 'FAILED' | 'CANCELED';
+
+export interface OrderItem {
+  book: Pick<BookSummary, 'id' | 'title' | 'coverUrl'> & { storeProductId: string | null };
+  unitPrice: number;
+}
+
+export interface Order {
+  id: string;
+  status: OrderStatus;
+  totalAmount: number;
+  createdAt: string;
+  paidAt: string | null;
+  items: OrderItem[];
+  payment: { provider: PaymentProviderName; transactionId: string; verifiedAt: string } | null;
+}
+
+export interface PaymentOptions {
+  /** 지금 서버에서 쓸 수 있는 결제 방식 */
+  providers: PaymentProviderName[];
+  testMode: boolean;
+}
+
+export interface VerifyPaymentResult {
+  success: boolean;
+  paymentStatus: OrderStatus;
+  entitlementGranted: boolean;
+  bookIds: string[];
+  order: Order;
+}
+
+export interface RestoreResult {
+  restored: number;
+  alreadyOwned: number;
+  failed: number;
+}
+
+export interface LibraryItem {
+  book: BookSummary;
+  purchasedAt: string;
 }

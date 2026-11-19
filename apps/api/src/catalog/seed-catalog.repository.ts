@@ -15,6 +15,7 @@ export class SeedCatalogRepository implements CatalogRepository {
     description: b.description,
     keywords: b.keywords,
     coverImageKey: `books/${b.id}/cover.png`,
+    storeProductId: b.storeProductId,
     price: b.price,
     ageMin: b.ageMin,
     ageMax: b.ageMax,
@@ -69,6 +70,10 @@ export class SeedCatalogRepository implements CatalogRepository {
 
   async findBookById(id: string) {
     return this.books.find((b) => b.id === id) ?? null;
+  }
+
+  async findBookByProductId(productId: string) {
+    return this.books.find((b) => b.storeProductId === productId) ?? null;
   }
 
   async findPages(bookId: string, fromPage: number, toPage: number): Promise<PageRecord[]> {

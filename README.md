@@ -3,7 +3,8 @@
 AI가 만들고 사람이 검수한 어린이 동화책(3~10세)을 검색·미리보기·구매하고, 내 서재에서 읽는 앱입니다.
 설계서: [docs/00-design-spec-v1.0.docx](docs/00-design-spec-v1.0.docx)
 
-**현재 단계: 1단계(기본 앱) 완료** — 둘러보기·검색·상세·무료 미리보기까지. 결과 보고: [docs/10-stage1-report.md](docs/10-stage1-report.md)
+**현재 단계: 2단계(판매) 완료** — 보호자 가입·로그인, 보호자 PIN, 주문, 테스트 결제 → 서버 검증 → 내 서재, 끝까지 읽기.
+결과 보고: [1단계](docs/10-stage1-report.md) · [2단계](docs/11-stage2-report.md)
 
 ## 구성
 ```
@@ -48,6 +49,10 @@ $env:DATABASE_URL="postgres://storybook:storybook@localhost:5432/storybook"
 pnpm api:dev
 ```
 
+### 결제 방식
+- 지금은 **테스트 결제**(돈이 나가지 않음)로 주문 → 영수증 → 서버 검증 → 내 서재 흐름 전체가 동작합니다.
+- 구글 플레이·애플 검증 코드는 들어 있고, `.env.example` 의 키를 넣으면 켜집니다. 정식 출시 때 `PAYMENT_TEST_MODE=false`.
+
 ### 테스트
 ```powershell
 pnpm api:test                                   # 시드 데이터 기준
@@ -65,7 +70,6 @@ pnpm --filter @storybook/api seed:sql   # database/seeds/001_storybooks.sql
 "따뜻한 그림책" 디자인 시스템 v1.0 — [docs/09-design-system.md](docs/09-design-system.md)
 
 ## 다음 단계 (설계서 10장)
-- 2단계 판매: 회원가입·로그인, 보호자 확인, 주문, 스토어 결제 서버 검증, 구매 권한
 - 3단계 독서: 뷰어, 이어 읽기, 비구매 전체 열람 차단
 - 4단계 관리자: 상품 등록·검수·판매 승인 웹
 - 5단계 출시 준비

@@ -2,7 +2,7 @@
   "expo": {
     "name": "동화숲",
     "slug": "ai-storybook-marketplace",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "scheme": "donghwasup",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -42,7 +42,8 @@
           "backgroundColor": "#FFF8EE"
         }
       ],
-      "expo-image"
+      "expo-image",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

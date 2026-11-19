@@ -10,9 +10,9 @@ INSERT INTO categories (id, slug, name, description, emoji, sort_order) VALUES (
   ON CONFLICT (id) DO UPDATE SET slug = EXCLUDED.slug, name = EXCLUDED.name, description = EXCLUDED.description, emoji = EXCLUDED.emoji, sort_order = EXCLUDED.sort_order;
 INSERT INTO categories (id, slug, name, description, emoji, sort_order) VALUES ('6f1c2a10-0001-4a00-8000-000000000005', 'habits', '생활 습관', '스스로 해내는 즐거운 습관 이야기', '🪥', 5)
   ON CONFLICT (id) DO UPDATE SET slug = EXCLUDED.slug, name = EXCLUDED.name, description = EXCLUDED.description, emoji = EXCLUDED.emoji, sort_order = EXCLUDED.sort_order;
-INSERT INTO books (id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
-  VALUES ('b0000001-5b00-4c00-8000-000000000001', '달빛 기차를 탄 토끼 토리', '잠이 오지 않던 밤, 토끼 토리 앞에 달빛 기차가 멈춰 섰어요. 별 마을을 한 바퀴 돌며 마음이 스르르 편안해지는 잠자리 모험 이야기.', ARRAY['토끼', '기차', '달', '별', '잠']::text[], 'books/b0000001-5b00-4c00-8000-000000000001/cover.png', 4900, 3, 6, 8, 3, 1820, 'PUBLISHED', '2026-10-02T09:00:00+09:00')
-  ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
+INSERT INTO books (id, store_product_id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
+  VALUES ('b0000001-5b00-4c00-8000-000000000001', 'storybook_001', '달빛 기차를 탄 토끼 토리', '잠이 오지 않던 밤, 토끼 토리 앞에 달빛 기차가 멈춰 섰어요. 별 마을을 한 바퀴 돌며 마음이 스르르 편안해지는 잠자리 모험 이야기.', ARRAY['토끼', '기차', '달', '별', '잠']::text[], 'books/b0000001-5b00-4c00-8000-000000000001/cover.png', 4900, 3, 6, 8, 3, 1820, 'PUBLISHED', '2026-10-02T09:00:00+09:00')
+  ON CONFLICT (id) DO UPDATE SET store_product_id = EXCLUDED.store_product_id, title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
     price = EXCLUDED.price, age_min = EXCLUDED.age_min, age_max = EXCLUDED.age_max, page_count = EXCLUDED.page_count, preview_pages = EXCLUDED.preview_pages,
     sales_count = EXCLUDED.sales_count, status = EXCLUDED.status, published_at = EXCLUDED.published_at, updated_at = NOW();
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000001', 1, '보름달이 동그랗게 뜬 밤, 토끼 토리는 이불 속에서 눈만 깜빡깜빡했어요. "오늘은 왜 이렇게 잠이 안 올까?"', 'books/b0000001-5b00-4c00-8000-000000000001/page-01.png')
@@ -33,9 +33,9 @@ INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000
   ON CONFLICT (book_id, page_number) DO UPDATE SET content = EXCLUDED.content, image_key = EXCLUDED.image_key;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000001', '6f1c2a10-0001-4a00-8000-000000000004') ON CONFLICT DO NOTHING;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000001', '6f1c2a10-0001-4a00-8000-000000000001') ON CONFLICT DO NOTHING;
-INSERT INTO books (id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
-  VALUES ('b0000001-5b00-4c00-8000-000000000002', '구름 우체부 몽실이', '하늘 마을의 막내 우체부 몽실이는 바람에 날아간 편지를 찾아 길을 나서요. 마음을 전하는 일이 얼마나 소중한지 알려 주는 따뜻한 우정 이야기.', ARRAY['구름', '편지', '우체부', '바람', '친구']::text[], 'books/b0000001-5b00-4c00-8000-000000000002/cover.png', 3900, 4, 7, 8, 3, 1340, 'PUBLISHED', '2026-10-09T09:00:00+09:00')
-  ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
+INSERT INTO books (id, store_product_id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
+  VALUES ('b0000001-5b00-4c00-8000-000000000002', 'storybook_002', '구름 우체부 몽실이', '하늘 마을의 막내 우체부 몽실이는 바람에 날아간 편지를 찾아 길을 나서요. 마음을 전하는 일이 얼마나 소중한지 알려 주는 따뜻한 우정 이야기.', ARRAY['구름', '편지', '우체부', '바람', '친구']::text[], 'books/b0000001-5b00-4c00-8000-000000000002/cover.png', 3900, 4, 7, 8, 3, 1340, 'PUBLISHED', '2026-10-09T09:00:00+09:00')
+  ON CONFLICT (id) DO UPDATE SET store_product_id = EXCLUDED.store_product_id, title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
     price = EXCLUDED.price, age_min = EXCLUDED.age_min, age_max = EXCLUDED.age_max, page_count = EXCLUDED.page_count, preview_pages = EXCLUDED.preview_pages,
     sales_count = EXCLUDED.sales_count, status = EXCLUDED.status, published_at = EXCLUDED.published_at, updated_at = NOW();
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000002', 1, '하늘 마을에는 폭신폭신한 구름 우체부들이 살아요. 그중 가장 작은 우체부가 바로 몽실이예요.', 'books/b0000001-5b00-4c00-8000-000000000002/page-01.png')
@@ -55,9 +55,9 @@ INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000002', 8, '그날 밤 몽실이는 생각했어요. ''마음을 전하는 일은 정말 멋진 일이야.'' 내일도 몽실이는 하늘을 날아요.', 'books/b0000001-5b00-4c00-8000-000000000002/page-08.png')
   ON CONFLICT (book_id, page_number) DO UPDATE SET content = EXCLUDED.content, image_key = EXCLUDED.image_key;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000002', '6f1c2a10-0001-4a00-8000-000000000002') ON CONFLICT DO NOTHING;
-INSERT INTO books (id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
-  VALUES ('b0000001-5b00-4c00-8000-000000000003', '용감한 꼬마 거북 바다', '모래사장에서 태어난 꼬마 거북 바다는 처음으로 넓은 바다를 향해 나아가요. 무서워도 한 걸음씩 나아가는 용기를 배우는 이야기.', ARRAY['거북', '바다', '용기', '파도']::text[], 'books/b0000001-5b00-4c00-8000-000000000003/cover.png', 4900, 4, 8, 8, 3, 1610, 'PUBLISHED', '2026-10-15T09:00:00+09:00')
-  ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
+INSERT INTO books (id, store_product_id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
+  VALUES ('b0000001-5b00-4c00-8000-000000000003', 'storybook_003', '용감한 꼬마 거북 바다', '모래사장에서 태어난 꼬마 거북 바다는 처음으로 넓은 바다를 향해 나아가요. 무서워도 한 걸음씩 나아가는 용기를 배우는 이야기.', ARRAY['거북', '바다', '용기', '파도']::text[], 'books/b0000001-5b00-4c00-8000-000000000003/cover.png', 4900, 4, 8, 8, 3, 1610, 'PUBLISHED', '2026-10-15T09:00:00+09:00')
+  ON CONFLICT (id) DO UPDATE SET store_product_id = EXCLUDED.store_product_id, title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
     price = EXCLUDED.price, age_min = EXCLUDED.age_min, age_max = EXCLUDED.age_max, page_count = EXCLUDED.page_count, preview_pages = EXCLUDED.preview_pages,
     sales_count = EXCLUDED.sales_count, status = EXCLUDED.status, published_at = EXCLUDED.published_at, updated_at = NOW();
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000003', 1, '따뜻한 모래 속에서 "톡!" 하고 알껍데기가 깨졌어요. 꼬마 거북 바다가 세상에 처음 고개를 내밀었어요.', 'books/b0000001-5b00-4c00-8000-000000000003/page-01.png')
@@ -78,9 +78,9 @@ INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000
   ON CONFLICT (book_id, page_number) DO UPDATE SET content = EXCLUDED.content, image_key = EXCLUDED.image_key;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000003', '6f1c2a10-0001-4a00-8000-000000000001') ON CONFLICT DO NOTHING;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000003', '6f1c2a10-0001-4a00-8000-000000000003') ON CONFLICT DO NOTHING;
-INSERT INTO books (id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
-  VALUES ('b0000001-5b00-4c00-8000-000000000004', '도토리 나눔 대작전', '겨울을 앞두고 도토리를 잔뜩 모은 다람쥐 도도. 배고픈 친구들을 만나며 나누면 더 커지는 기쁨을 알게 되는 이야기.', ARRAY['다람쥐', '도토리', '나눔', '겨울', '숲']::text[], 'books/b0000001-5b00-4c00-8000-000000000004/cover.png', 3900, 3, 6, 8, 3, 1190, 'PUBLISHED', '2026-10-20T09:00:00+09:00')
-  ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
+INSERT INTO books (id, store_product_id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
+  VALUES ('b0000001-5b00-4c00-8000-000000000004', 'storybook_004', '도토리 나눔 대작전', '겨울을 앞두고 도토리를 잔뜩 모은 다람쥐 도도. 배고픈 친구들을 만나며 나누면 더 커지는 기쁨을 알게 되는 이야기.', ARRAY['다람쥐', '도토리', '나눔', '겨울', '숲']::text[], 'books/b0000001-5b00-4c00-8000-000000000004/cover.png', 3900, 3, 6, 8, 3, 1190, 'PUBLISHED', '2026-10-20T09:00:00+09:00')
+  ON CONFLICT (id) DO UPDATE SET store_product_id = EXCLUDED.store_product_id, title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
     price = EXCLUDED.price, age_min = EXCLUDED.age_min, age_max = EXCLUDED.age_max, page_count = EXCLUDED.page_count, preview_pages = EXCLUDED.preview_pages,
     sales_count = EXCLUDED.sales_count, status = EXCLUDED.status, published_at = EXCLUDED.published_at, updated_at = NOW();
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000004', 1, '가을 숲에 도토리가 우수수 떨어졌어요. 다람쥐 도도는 볼이 빵빵해지도록 도토리를 모았어요.', 'books/b0000001-5b00-4c00-8000-000000000004/page-01.png')
@@ -101,9 +101,9 @@ INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000
   ON CONFLICT (book_id, page_number) DO UPDATE SET content = EXCLUDED.content, image_key = EXCLUDED.image_key;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000004', '6f1c2a10-0001-4a00-8000-000000000002') ON CONFLICT DO NOTHING;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000004', '6f1c2a10-0001-4a00-8000-000000000003') ON CONFLICT DO NOTHING;
-INSERT INTO books (id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
-  VALUES ('b0000001-5b00-4c00-8000-000000000005', '반짝반짝 이 닦기 왕국', '이 닦기가 귀찮은 아기 곰 뭉치가 꿈속에서 ''반짝반짝 왕국''을 여행해요. 양치 습관을 즐겁게 익히는 생활 습관 동화.', ARRAY['양치', '이 닦기', '습관', '곰']::text[], 'books/b0000001-5b00-4c00-8000-000000000005/cover.png', 2900, 3, 5, 8, 2, 2050, 'PUBLISHED', '2026-10-23T09:00:00+09:00')
-  ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
+INSERT INTO books (id, store_product_id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
+  VALUES ('b0000001-5b00-4c00-8000-000000000005', 'storybook_005', '반짝반짝 이 닦기 왕국', '이 닦기가 귀찮은 아기 곰 뭉치가 꿈속에서 ''반짝반짝 왕국''을 여행해요. 양치 습관을 즐겁게 익히는 생활 습관 동화.', ARRAY['양치', '이 닦기', '습관', '곰']::text[], 'books/b0000001-5b00-4c00-8000-000000000005/cover.png', 2900, 3, 5, 8, 2, 2050, 'PUBLISHED', '2026-10-23T09:00:00+09:00')
+  ON CONFLICT (id) DO UPDATE SET store_product_id = EXCLUDED.store_product_id, title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
     price = EXCLUDED.price, age_min = EXCLUDED.age_min, age_max = EXCLUDED.age_max, page_count = EXCLUDED.page_count, preview_pages = EXCLUDED.preview_pages,
     sales_count = EXCLUDED.sales_count, status = EXCLUDED.status, published_at = EXCLUDED.published_at, updated_at = NOW();
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000005', 1, '"이 닦기 싫어!" 아기 곰 뭉치는 칫솔을 쏙 숨기고 이불 속으로 들어갔어요.', 'books/b0000001-5b00-4c00-8000-000000000005/page-01.png')
@@ -123,9 +123,9 @@ INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000005', 8, '아침에 일어난 뭉치는 칫솔부터 찾았어요. "오늘도 쓱싹쓱싹, 반짝반짝!"', 'books/b0000001-5b00-4c00-8000-000000000005/page-08.png')
   ON CONFLICT (book_id, page_number) DO UPDATE SET content = EXCLUDED.content, image_key = EXCLUDED.image_key;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000005', '6f1c2a10-0001-4a00-8000-000000000005') ON CONFLICT DO NOTHING;
-INSERT INTO books (id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
-  VALUES ('b0000001-5b00-4c00-8000-000000000006', '눈사람 포포의 첫 봄', '봄이 오면 녹아 버릴까 걱정하는 눈사람 포포. 계절이 바뀌는 자연의 흐름과 이별 뒤에 오는 새로운 만남을 담은 이야기.', ARRAY['눈사람', '봄', '계절', '눈']::text[], 'books/b0000001-5b00-4c00-8000-000000000006/cover.png', 4900, 5, 9, 8, 3, 870, 'PUBLISHED', '2026-10-28T09:00:00+09:00')
-  ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
+INSERT INTO books (id, store_product_id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
+  VALUES ('b0000001-5b00-4c00-8000-000000000006', 'storybook_006', '눈사람 포포의 첫 봄', '봄이 오면 녹아 버릴까 걱정하는 눈사람 포포. 계절이 바뀌는 자연의 흐름과 이별 뒤에 오는 새로운 만남을 담은 이야기.', ARRAY['눈사람', '봄', '계절', '눈']::text[], 'books/b0000001-5b00-4c00-8000-000000000006/cover.png', 4900, 5, 9, 8, 3, 870, 'PUBLISHED', '2026-10-28T09:00:00+09:00')
+  ON CONFLICT (id) DO UPDATE SET store_product_id = EXCLUDED.store_product_id, title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
     price = EXCLUDED.price, age_min = EXCLUDED.age_min, age_max = EXCLUDED.age_max, page_count = EXCLUDED.page_count, preview_pages = EXCLUDED.preview_pages,
     sales_count = EXCLUDED.sales_count, status = EXCLUDED.status, published_at = EXCLUDED.published_at, updated_at = NOW();
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000006', 1, '하얀 눈이 펑펑 내린 날, 아이들이 동그란 눈사람을 만들었어요. 이름은 포포였어요.', 'books/b0000001-5b00-4c00-8000-000000000006/page-01.png')
@@ -145,9 +145,9 @@ INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000006', 8, '봄이 온 언덕에는 빨간 꽃이 활짝 피었어요. 꼭 포포의 빨간 목도리를 닮은 꽃이었어요.', 'books/b0000001-5b00-4c00-8000-000000000006/page-08.png')
   ON CONFLICT (book_id, page_number) DO UPDATE SET content = EXCLUDED.content, image_key = EXCLUDED.image_key;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000006', '6f1c2a10-0001-4a00-8000-000000000003') ON CONFLICT DO NOTHING;
-INSERT INTO books (id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
-  VALUES ('b0000001-5b00-4c00-8000-000000000007', '별을 세는 부엉이', '밤마다 별을 세다가 늘 숫자를 잊어버리는 아기 부엉이 부부. 천천히 숫자를 세며 마음을 가라앉히는 잠자리 동화.', ARRAY['부엉이', '별', '숫자', '밤', '잠']::text[], 'books/b0000001-5b00-4c00-8000-000000000007/cover.png', 3900, 3, 7, 8, 3, 1450, 'PUBLISHED', '2026-11-02T09:00:00+09:00')
-  ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
+INSERT INTO books (id, store_product_id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
+  VALUES ('b0000001-5b00-4c00-8000-000000000007', 'storybook_007', '별을 세는 부엉이', '밤마다 별을 세다가 늘 숫자를 잊어버리는 아기 부엉이 부부. 천천히 숫자를 세며 마음을 가라앉히는 잠자리 동화.', ARRAY['부엉이', '별', '숫자', '밤', '잠']::text[], 'books/b0000001-5b00-4c00-8000-000000000007/cover.png', 3900, 3, 7, 8, 3, 1450, 'PUBLISHED', '2026-11-02T09:00:00+09:00')
+  ON CONFLICT (id) DO UPDATE SET store_product_id = EXCLUDED.store_product_id, title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
     price = EXCLUDED.price, age_min = EXCLUDED.age_min, age_max = EXCLUDED.age_max, page_count = EXCLUDED.page_count, preview_pages = EXCLUDED.preview_pages,
     sales_count = EXCLUDED.sales_count, status = EXCLUDED.status, published_at = EXCLUDED.published_at, updated_at = NOW();
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000007', 1, '깊은 숲속 커다란 참나무에 아기 부엉이 부부가 살았어요. 부부는 밤하늘 별 세기를 가장 좋아했어요.', 'books/b0000001-5b00-4c00-8000-000000000007/page-01.png')
@@ -167,9 +167,9 @@ INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000007', 8, '오늘 밤 너도 부부처럼 별을 세어 볼래? 하나, 둘, 셋… 잘 자, 우리 아기.', 'books/b0000001-5b00-4c00-8000-000000000007/page-08.png')
   ON CONFLICT (book_id, page_number) DO UPDATE SET content = EXCLUDED.content, image_key = EXCLUDED.image_key;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000007', '6f1c2a10-0001-4a00-8000-000000000004') ON CONFLICT DO NOTHING;
-INSERT INTO books (id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
-  VALUES ('b0000001-5b00-4c00-8000-000000000008', '꿀벌 윙윙이의 정원', '시들어 가는 정원을 살리기 위해 꽃가루를 나르는 꿀벌 윙윙이. 작은 존재가 자연에 얼마나 큰 힘이 되는지 알려 주는 이야기.', ARRAY['꿀벌', '꽃', '정원', '자연']::text[], 'books/b0000001-5b00-4c00-8000-000000000008/cover.png', 3900, 4, 8, 8, 3, 980, 'PUBLISHED', '2026-11-06T09:00:00+09:00')
-  ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
+INSERT INTO books (id, store_product_id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
+  VALUES ('b0000001-5b00-4c00-8000-000000000008', 'storybook_008', '꿀벌 윙윙이의 정원', '시들어 가는 정원을 살리기 위해 꽃가루를 나르는 꿀벌 윙윙이. 작은 존재가 자연에 얼마나 큰 힘이 되는지 알려 주는 이야기.', ARRAY['꿀벌', '꽃', '정원', '자연']::text[], 'books/b0000001-5b00-4c00-8000-000000000008/cover.png', 3900, 4, 8, 8, 3, 980, 'PUBLISHED', '2026-11-06T09:00:00+09:00')
+  ON CONFLICT (id) DO UPDATE SET store_product_id = EXCLUDED.store_product_id, title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
     price = EXCLUDED.price, age_min = EXCLUDED.age_min, age_max = EXCLUDED.age_max, page_count = EXCLUDED.page_count, preview_pages = EXCLUDED.preview_pages,
     sales_count = EXCLUDED.sales_count, status = EXCLUDED.status, published_at = EXCLUDED.published_at, updated_at = NOW();
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000008', 1, '마을 끝에 오래된 정원이 있었어요. 그런데 올해는 꽃이 잘 피지 않아 정원이 조용했어요.', 'books/b0000001-5b00-4c00-8000-000000000008/page-01.png')
@@ -189,9 +189,9 @@ INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000008', 8, '윙윙이는 꽃잎 위에서 미소 지었어요. 작은 날갯짓이 정원을 다시 살려 낸 거예요.', 'books/b0000001-5b00-4c00-8000-000000000008/page-08.png')
   ON CONFLICT (book_id, page_number) DO UPDATE SET content = EXCLUDED.content, image_key = EXCLUDED.image_key;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000008', '6f1c2a10-0001-4a00-8000-000000000003') ON CONFLICT DO NOTHING;
-INSERT INTO books (id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
-  VALUES ('b0000001-5b00-4c00-8000-000000000009', '무지개 다리 너머', '비 그친 오후, 여우 소녀 루루는 무지개 끝을 찾아 모험을 떠나요. 일곱 빛깔 마을에서 저마다 다른 친구들을 만나며 다름의 아름다움을 배우는 이야기.', ARRAY['무지개', '여우', '모험', '색깔', '다름']::text[], 'books/b0000001-5b00-4c00-8000-000000000009/cover.png', 5900, 6, 10, 8, 3, 760, 'PUBLISHED', '2026-11-10T09:00:00+09:00')
-  ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
+INSERT INTO books (id, store_product_id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
+  VALUES ('b0000001-5b00-4c00-8000-000000000009', 'storybook_009', '무지개 다리 너머', '비 그친 오후, 여우 소녀 루루는 무지개 끝을 찾아 모험을 떠나요. 일곱 빛깔 마을에서 저마다 다른 친구들을 만나며 다름의 아름다움을 배우는 이야기.', ARRAY['무지개', '여우', '모험', '색깔', '다름']::text[], 'books/b0000001-5b00-4c00-8000-000000000009/cover.png', 5900, 6, 10, 8, 3, 760, 'PUBLISHED', '2026-11-10T09:00:00+09:00')
+  ON CONFLICT (id) DO UPDATE SET store_product_id = EXCLUDED.store_product_id, title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
     price = EXCLUDED.price, age_min = EXCLUDED.age_min, age_max = EXCLUDED.age_max, page_count = EXCLUDED.page_count, preview_pages = EXCLUDED.preview_pages,
     sales_count = EXCLUDED.sales_count, status = EXCLUDED.status, published_at = EXCLUDED.published_at, updated_at = NOW();
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000009', 1, '비가 그친 오후, 하늘에 커다란 무지개가 걸렸어요. 여우 소녀 루루는 무지개 끝이 어디인지 궁금했어요.', 'books/b0000001-5b00-4c00-8000-000000000009/page-01.png')
@@ -212,9 +212,9 @@ INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000
   ON CONFLICT (book_id, page_number) DO UPDATE SET content = EXCLUDED.content, image_key = EXCLUDED.image_key;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000009', '6f1c2a10-0001-4a00-8000-000000000001') ON CONFLICT DO NOTHING;
 INSERT INTO book_categories (book_id, category_id) VALUES ('b0000001-5b00-4c00-8000-000000000009', '6f1c2a10-0001-4a00-8000-000000000002') ON CONFLICT DO NOTHING;
-INSERT INTO books (id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
-  VALUES ('b0000001-5b00-4c00-8000-000000000010', '혼자서도 척척 곰돌이', '유치원에 가기 전 혼자서 옷 입기, 신발 신기, 가방 챙기기에 도전하는 곰돌이 토토. 스스로 해내는 뿌듯함을 느끼는 생활 습관 동화.', ARRAY['곰', '혼자서', '습관', '유치원', '옷 입기']::text[], 'books/b0000001-5b00-4c00-8000-000000000010/cover.png', 2900, 3, 6, 8, 2, 1120, 'PUBLISHED', '2026-11-14T09:00:00+09:00')
-  ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
+INSERT INTO books (id, store_product_id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
+  VALUES ('b0000001-5b00-4c00-8000-000000000010', 'storybook_010', '혼자서도 척척 곰돌이', '유치원에 가기 전 혼자서 옷 입기, 신발 신기, 가방 챙기기에 도전하는 곰돌이 토토. 스스로 해내는 뿌듯함을 느끼는 생활 습관 동화.', ARRAY['곰', '혼자서', '습관', '유치원', '옷 입기']::text[], 'books/b0000001-5b00-4c00-8000-000000000010/cover.png', 2900, 3, 6, 8, 2, 1120, 'PUBLISHED', '2026-11-14T09:00:00+09:00')
+  ON CONFLICT (id) DO UPDATE SET store_product_id = EXCLUDED.store_product_id, title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
     price = EXCLUDED.price, age_min = EXCLUDED.age_min, age_max = EXCLUDED.age_max, page_count = EXCLUDED.page_count, preview_pages = EXCLUDED.preview_pages,
     sales_count = EXCLUDED.sales_count, status = EXCLUDED.status, published_at = EXCLUDED.published_at, updated_at = NOW();
 INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ('b0000001-5b00-4c00-8000-000000000010', 1, '따르릉! 아침 알람이 울렸어요. 곰돌이 토토는 오늘 아주 큰 결심을 했어요. "오늘은 혼자서 해 볼 거야!"', 'books/b0000001-5b00-4c00-8000-000000000010/page-01.png')

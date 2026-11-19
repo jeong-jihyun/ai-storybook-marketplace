@@ -1,24 +1,21 @@
 // SCR-006 동화책 상세: 표지, 소개, 권장 연령, 페이지 수, 미리보기, 가격
 import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AgeBadge, Tag } from '../../../components/Badges';
 import { Button } from '../../../components/Button';
 import { Cover } from '../../../components/Cover';
-import { Notice } from '../../../components/Notice';
 import { Screen } from '../../../components/Screen';
 import { ErrorView, Loading } from '../../../components/States';
-import { useBook, usePreview } from '../../../hooks/queries';
+import { useBookForUser, usePreview } from '../../../hooks/queries';
 import { resolveAsset } from '../../../services/api';
 import { colors, fonts, radius, shadow, space, type as t, won } from '../../../theme';
 
 export default function BookDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const book = useBook(id);
+  const book = useBookForUser(id);
   const preview = usePreview(id);
-  const [notice, setNotice] = useState(false);
 
   if (book.isLoading) return <Screen edges={[]}><Loading /></Screen>;
   if (book.isError || !book.data) {
@@ -103,22 +100,20 @@ export default function BookDetailScreen() {
 
       <View style={styles.bar}>
         <View>
-          <Text style={t.caption}>가격</Text>
-          <Text style={styles.price}>{won(b.price)}</Text>
+          <Text style={t.caption}>{b.owned ? '내 서재' : '가격'}</Text>
+          <Text style={styles.price}>{b.owned ? '구매함' : won(b.price)}</Text>
         </View>
         <View style={styles.actions}>
-          <Button label="미리보기" variant="secondary" onPress={openPreview} />
-          <Button label="구매하기" onPress={() => setNotice(true)} disabled={!b.purchasable} />
+          {b.owned ? (
+            <Button label="📖 끝까지 읽기" onPress={() => router.push({ pathname: '/read/[bookId]', params: { bookId: b.id } })} />
+          ) : (
+            <>
+              <Button label="미리보기" variant="secondary" onPress={openPreview} />
+              <Button label="구매하기" onPress={() => router.push({ pathname: '/checkout/[bookId]', params: { bookId: b.id } })} disabled={!b.purchasable} />
+            </>
+          )}
         </View>
       </View>
-
-      <Notice
-        visible={notice}
-        emoji="🛒"
-        title="결제는 곧 열려요"
-        message={'지금은 1단계(둘러보기) 버전이에요.\n보호자 확인과 스토어 결제는 2단계에서 열려요.\n그동안 무료 미리보기를 즐겨 주세요!'}
-        onClose={() => setNotice(false)}
-      />
     </Screen>
   );
 }

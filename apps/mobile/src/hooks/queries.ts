@@ -1,6 +1,7 @@
 import type { BookSort } from '@storybook/shared-types';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
+import { useSession } from '../store/session';
 
 export const useHome = () => useQuery({ queryKey: ['home'], queryFn: api.home });
 export const useCategories = () => useQuery({ queryKey: ['categories'], queryFn: api.categories, staleTime: 10 * 60_000 });
@@ -35,3 +36,26 @@ export function useSearch(q: string, sort: BookSort) {
     placeholderData: keepPreviousData,
   });
 }
+
+// ───── 2단계 ─────
+
+const useUserId = () => useSession((s) => s.user?.id ?? 'guest');
+
+/** 로그인 상태에 따라 구매 여부(owned)가 달라지므로 사용자별로 캐시 */
+export const useBookForUser = (id: string) => {
+  const uid = useUserId();
+  return useQuery({ queryKey: ['book', id, uid], queryFn: () => api.book(id), enabled: !!id });
+};
+export const useLibrary = () => {
+  const uid = useUserId();
+  return useQuery({ queryKey: ['library', uid], queryFn: api.library, enabled: uid !== 'guest' });
+};
+export const useOrders = () => {
+  const uid = useUserId();
+  return useQuery({ queryKey: ['orders', uid], queryFn: api.orders, enabled: uid !== 'guest' });
+};
+export const useOrder = (id: string) => useQuery({ queryKey: ['order', id], queryFn: () => api.order(id), enabled: !!id });
+export const useOwnedPages = (bookId: string) => {
+  const uid = useUserId();
+  return useQuery({ queryKey: ['owned-pages', bookId, uid], queryFn: () => api.ownedPages(bookId), enabled: !!bookId && uid !== 'guest' });
+};

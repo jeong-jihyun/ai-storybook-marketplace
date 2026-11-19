@@ -19,9 +19,9 @@ for (const c of seed.categories) {
 }
 for (const b of seed.books) {
   lines.push(
-    `INSERT INTO books (id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
-  VALUES (${q(b.id)}, ${q(b.title)}, ${q(b.description)}, ${arr(b.keywords)}, ${q(`books/${b.id}/cover.png`)}, ${b.price}, ${b.ageMin}, ${b.ageMax}, ${b.pages.length}, ${b.previewPages}, ${b.salesCount}, 'PUBLISHED', ${q(b.publishedAt)})
-  ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
+    `INSERT INTO books (id, store_product_id, title, description, keywords, cover_image_key, price, age_min, age_max, page_count, preview_pages, sales_count, status, published_at)
+  VALUES (${q(b.id)}, ${q(b.storeProductId)}, ${q(b.title)}, ${q(b.description)}, ${arr(b.keywords)}, ${q(`books/${b.id}/cover.png`)}, ${b.price}, ${b.ageMin}, ${b.ageMax}, ${b.pages.length}, ${b.previewPages}, ${b.salesCount}, 'PUBLISHED', ${q(b.publishedAt)})
+  ON CONFLICT (id) DO UPDATE SET store_product_id = EXCLUDED.store_product_id, title = EXCLUDED.title, description = EXCLUDED.description, keywords = EXCLUDED.keywords, cover_image_key = EXCLUDED.cover_image_key,
     price = EXCLUDED.price, age_min = EXCLUDED.age_min, age_max = EXCLUDED.age_max, page_count = EXCLUDED.page_count, preview_pages = EXCLUDED.preview_pages,
     sales_count = EXCLUDED.sales_count, status = EXCLUDED.status, published_at = EXCLUDED.published_at, updated_at = NOW();`,
   );

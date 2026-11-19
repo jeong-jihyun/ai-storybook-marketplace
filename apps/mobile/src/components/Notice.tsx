@@ -25,3 +25,23 @@ const styles = StyleSheet.create({
   box: { width: '100%', maxWidth: 360, backgroundColor: colors.surface, borderRadius: radius.lg, padding: space.xxl, alignItems: 'stretch' },
   emoji: { fontSize: 44, textAlign: 'center', marginBottom: space.sm },
 });
+
+/** 되돌릴 수 없는 일 전에 한 번 더 묻는 상자 */
+export function Confirm({ visible, emoji, title, message, confirmLabel, onConfirm, onCancel }: { visible: boolean; emoji: string; title: string; message: string; confirmLabel: string; onConfirm: () => void; onCancel: () => void }) {
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+      <View style={styles.overlay}>
+        <View style={styles.box}>
+          <Text style={styles.emoji}>{emoji}</Text>
+          <Text style={[t.title, { textAlign: 'center' }]}>{title}</Text>
+          <Text style={[t.body, { textAlign: 'center', color: colors.inkSoft, marginTop: space.sm }]}>{message}</Text>
+          <View style={{ flexDirection: 'row', gap: space.sm, marginTop: space.xl }}>
+            <Button label="그만두기" variant="secondary" onPress={onCancel} />
+            <Button label={confirmLabel} onPress={onConfirm} />
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+

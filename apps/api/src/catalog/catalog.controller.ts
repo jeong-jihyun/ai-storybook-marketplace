@@ -1,4 +1,5 @@
-import { Controller, Get, Param, ParseIntPipe, ParseUUIDPipe, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, ParseUUIDPipe, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard, CurrentUser, OptionalAuth, type AuthUser } from '../auth/auth.guard';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ListBooksQuery, SearchBooksQuery } from './catalog.dto';
 import { CatalogService } from './catalog.service';
@@ -42,9 +43,11 @@ export class CatalogController {
   }
 
   @Get('books/:id')
-  @ApiOperation({ summary: '동화책 상세 (BOOK-002)' })
-  detail(@Param('id', uuid) id: string) {
-    return this.catalog.detail(id);
+  @UseGuards(AuthGuard)
+  @OptionalAuth()
+  @ApiOperation({ summary: '동화책 상세 (BOOK-002) — 로그인 시 구매 여부(owned) 포함' })
+  detail(@Param('id', uuid) id: string, @CurrentUser() user?: AuthUser) {
+    return this.catalog.detail(id, user?.id);
   }
 
   @Get('books/:id/preview')
@@ -54,8 +57,10 @@ export class CatalogController {
   }
 
   @Get('books/:id/pages/:page')
-  @ApiOperation({ summary: '허용된 페이지 한 장 (1단계: 미리보기 범위만)' })
-  page(@Param('id', uuid) id: string, @Param('page', ParseIntPipe) page: number) {
-    return this.catalog.page(id, page);
+  @UseGuards(AuthGuard)
+  @OptionalAuth()
+  @ApiOperation({ summary: '허용된 페이지 한 장 (미리보기 범위 또는 구매한 책)' })
+  page(@Param('id', uuid) id: string, @Param('page', ParseIntPipe) page: number, @CurrentUser() user?: AuthUser) {
+    return this.catalog.page(id, page, user?.id);
   }
 }

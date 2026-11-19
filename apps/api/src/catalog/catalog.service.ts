@@ -1,13 +1,17 @@
 import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import type { BookDetail, BookPage, BookPreview, BookSummary, Category, HomeFeed, Paginated } from '@storybook/shared-types';
 import { assetUrl } from '../common/asset-url';
+import { COMMERCE_STORE, type CommerceStore } from '../commerce/commerce.store';
 import { CATALOG_REPOSITORY, type BookQuery, type BookRecord, type CatalogRepository, type PageRecord } from './catalog.repository';
 
 @Injectable()
 export class CatalogService {
-  constructor(@Inject(CATALOG_REPOSITORY) private readonly repo: CatalogRepository) {}
+  constructor(
+    @Inject(CATALOG_REPOSITORY) private readonly repo: CatalogRepository,
+    @Inject(COMMERCE_STORE) private readonly store: CommerceStore,
+  ) {}
 
-  private toSummary(b: BookRecord): BookSummary {
+  toSummary(b: BookRecord): BookSummary {
     return {
       id: b.id,
       title: b.title,
@@ -69,9 +73,11 @@ export class CatalogService {
     return b;
   }
 
-  async detail(id: string): Promise<BookDetail> {
+  async detail(id: string, userId?: string): Promise<BookDetail> {
     const b = await this.getPublished(id);
     return {
+      owned: userId ? await this.store.ownsBook(userId, id) : false,
+      storeProductId: b.storeProductId,
       ...this.toSummary(b),
       description: b.description,
       keywords: b.keywords,
@@ -88,19 +94,25 @@ export class CatalogService {
     return { bookId: id, totalPages: b.pageCount, previewPages: n, pages: pages.map((p) => this.toPage(p)) };
   }
 
-  /**
-   * 페이지 한 장 조회. 1단계에서는 미리보기 범위만 허용한다.
-   * (2·3단계에서 구매 권한(library)이 있으면 전체 페이지 허용으로 확장)
-   */
-  async page(id: string, pageNumber: number): Promise<BookPage> {
+  /** 페이지 한 장: 미리보기 범위는 누구나, 그 밖은 구매한 사람만 (READ-001) */
+  async page(id: string, pageNumber: number, userId?: string): Promise<BookPage> {
     const b = await this.getPublished(id);
     if (pageNumber < 1 || pageNumber > b.pageCount) {
       throw new NotFoundException({ code: 'PAGE_NOT_FOUND', message: '없는 페이지예요.' });
     }
-    if (pageNumber > b.previewPages) {
+    if (pageNumber > b.previewPages && !(userId && (await this.store.ownsBook(userId, id)))) {
       throw new ForbiddenException({ code: 'PURCHASE_REQUIRED', message: '이 페이지는 구매 후 읽을 수 있어요.' });
     }
     const [p] = await this.repo.findPages(id, pageNumber, pageNumber);
     return this.toPage(p);
+  }
+
+  /** 구매한 책의 전체 페이지 (판매 중지된 책도 이미 산 사람은 읽을 수 있다) */
+  async ownedPages(bookId: string, from = 1, to = 10_000): Promise<{ title: string; totalPages: number; pages: BookPage[] }> {
+    const b = await this.repo.findBookById(bookId);
+    if (!b) throw new NotFoundException({ code: 'BOOK_NOT_FOUND', message: '동화책을 찾을 수 없어요.' });
+    const pages = await this.repo.findPages(bookId, from, Math.min(to, b.pageCount));
+    if (from > b.pageCount || from < 1) throw new NotFoundException({ code: 'PAGE_NOT_FOUND', message: '없는 페이지예요.' });
+    return { title: b.title, totalPages: b.pageCount, pages: pages.map((p) => this.toPage(p)) };
   }
 }

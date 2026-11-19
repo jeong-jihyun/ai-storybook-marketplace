@@ -1,0 +1,21 @@
+# 로컬 개발용 DB·캐시 (PostgreSQL 16 + Redis 7)
+# 처음 실행 시 database/migrations → database/seeds 순서로 자동 적용된다.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: storybook
+      POSTGRES_PASSWORD: storybook
+      POSTGRES_DB: storybook
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/migrations/001_init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+      - ./database/seeds/001_storybooks.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+volumes:
+  pgdata:

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm --filter @storybook/api build && pnpm --filter mobile export:web",
+  "outputDirectory": "apps/mobile/dist",
+  "framework": null,
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "{apps/api/storage/**,apps/api/dist/**,node_modules/swagger-ui-dist/**}",
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/((?!api/|_expo/|assets/|favicon).*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    { "source": "/_expo/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }
+  ]
+}

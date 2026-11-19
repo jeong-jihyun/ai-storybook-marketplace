@@ -1,0 +1,16 @@
+{
+  "name": "ai-storybook-marketplace",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AI 생성 동화책 판매 모바일 앱 (React Native · NestJS · PostgreSQL · Redis)",
+  "scripts": {
+    "api:dev": "pnpm --filter @storybook/api start:dev",
+    "api:build": "pnpm --filter @storybook/api build",
+    "api:test": "pnpm --filter @storybook/api test",
+    "mobile:start": "pnpm --filter mobile start",
+    "mobile:web": "pnpm --filter mobile web",
+    "mobile:export-web": "pnpm --filter mobile export:web",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "packageManager": "pnpm@10.28.0"
+}

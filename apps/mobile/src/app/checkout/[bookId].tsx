@@ -76,7 +76,7 @@ export default function Checkout() {
   };
 
   return (
-    <Screen edges={['bottom']}>
+    <Screen edges={['bottom']} form>
       <Stack.Screen options={{ title: '주문 확인' }} />
       <ScrollView contentContainerStyle={{ padding: space.xl, gap: space.xl, paddingBottom: 140 }}>
         <View style={[styles.item, shadow]}>

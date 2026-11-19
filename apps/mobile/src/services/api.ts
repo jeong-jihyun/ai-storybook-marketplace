@@ -15,6 +15,10 @@ import type {
   PaymentOptions,
   PaymentProviderName,
   RestoreResult,
+  MySubscription,
+  RedeemCreditResult,
+  SubscriptionPlan,
+  SubscriptionVerifyResult,
   VerifyPaymentResult,
 } from '@storybook/shared-types';
 import Constants from 'expo-constants';
@@ -46,7 +50,7 @@ let refreshing: Promise<boolean> | null = null;
 
 /** 액세스 토큰이 만료되면 한 번만 갱신 (여러 요청이 동시에 와도 갱신은 1번) — MEM-003 */
 async function refreshTokens(): Promise<boolean> {
-  const { refreshToken, setTokens, clear } = useSession.getState();
+  const { refreshToken, setTokens } = useSession.getState();
   if (!refreshToken) return false;
   refreshing ??= (async () => {
     try {
@@ -56,7 +60,7 @@ async function refreshTokens(): Promise<boolean> {
         body: JSON.stringify({ refreshToken }),
       });
       if (!res.ok) {
-        await clear();
+        if (res.status === 401) await useSession.getState().expire();
         return false;
       }
       await setTokens((await res.json()) as AuthTokens);
@@ -101,7 +105,7 @@ async function request<T>(path: string, o: Opts = {}, retried = false): Promise<
     const body = (await res.json().catch(() => null)) as ApiError | null;
     const code = body?.code ?? 'ERROR';
     if (res.status === 401 && code === 'TOKEN_EXPIRED' && !retried && (await refreshTokens())) return request<T>(path, o, true);
-    if (res.status === 401 && code === 'TOKEN_EXPIRED') await useSession.getState().clear();
+    if (res.status === 401 && code === 'TOKEN_EXPIRED') await useSession.getState().expire();
     if (code === 'PARENT_REQUIRED') useSession.setState({ parent: null });
     throw new ApiRequestError(res.status, code, body?.message ?? '잠시 후 다시 시도해 주세요.');
   }
@@ -140,6 +144,17 @@ export const api = {
     request<VerifyPaymentResult>('/payments/verify', { method: 'POST', body: b, parent: true }),
   restore: (provider: PaymentProviderName, purchases: { productId: string; purchaseToken: string }[]) =>
     request<RestoreResult>('/payments/restore', { method: 'POST', body: { provider, purchases } }),
+
+  // 구독 (월 소장권)
+  plans: () => request<SubscriptionPlan[]>('/subscriptions/plans', { auth: false }),
+  mySubscription: () => request<{ subscription: MySubscription | null }>('/subscriptions/me'),
+  subTestCheckout: (planCode: string, outcome: 'success' | 'cancel' | 'fail') =>
+    request<{ outcome: string; productId?: string; purchaseToken?: string }>('/subscriptions/test/checkout', { method: 'POST', body: { planCode, outcome }, parent: true }),
+  subVerify: (b: { provider: PaymentProviderName; productId?: string; purchaseToken: string }) =>
+    request<SubscriptionVerifyResult>('/subscriptions/verify', { method: 'POST', body: b, parent: true }),
+  subCancel: () => request<MySubscription>('/subscriptions/cancel', { method: 'POST', parent: true }),
+  subResume: () => request<MySubscription>('/subscriptions/resume', { method: 'POST', parent: true }),
+  redeem: (bookId: string) => request<RedeemCreditResult>('/subscriptions/redeem', { method: 'POST', body: { bookId }, parent: true }),
 
   // 서재
   library: () => request<LibraryItem[]>('/library'),

@@ -19,6 +19,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const expired = useSession((s) => s.expired);
 
   const submit = async () => {
     if (!email.trim() || !password) return setError('이메일과 비밀번호를 입력해 주세요.');
@@ -36,7 +37,7 @@ export default function Login() {
   };
 
   return (
-    <Screen edges={['bottom']}>
+    <Screen edges={['bottom']} form>
       <Stack.Screen options={{ title: '로그인' }} />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={{ padding: space.xl, gap: space.lg }} keyboardShouldPersistTaps="handled">
@@ -45,6 +46,11 @@ export default function Login() {
           <Text style={[t.caption, { textAlign: 'center', marginTop: -8 }]}>
             {next?.startsWith('/checkout') ? '로그인하면 바로 결제 화면으로 이어져요.' : '구매한 동화는 어느 기기에서든 내 서재에서 볼 수 있어요.'}
           </Text>
+          {expired ? (
+            <View style={{ backgroundColor: colors.sunSoft, borderRadius: 12, padding: space.md }}>
+              <Text style={[t.caption, { color: '#8A5A00' }]}>로그인 시간이 지나서 다시 로그인이 필요해요. 하던 화면으로 바로 돌아가요.</Text>
+            </View>
+          ) : null}
           <Field label="이메일" value={email} onChangeText={setEmail} keyboardType="email-address" textContentType="emailAddress" autoComplete="email" placeholder="parent@example.com" />
           <Field label="비밀번호" value={password} onChangeText={setPassword} secure textContentType="password" autoComplete="password" onSubmitEditing={submit} returnKeyType="go" />
           {error ? <Text style={[t.body, { color: colors.danger }]} accessibilityLiveRegion="polite">{error}</Text> : null}

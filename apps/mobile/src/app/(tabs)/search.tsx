@@ -10,6 +10,7 @@ import { EmptyView, ErrorView, Loading } from '../../components/States';
 import { SORT_OPTIONS, useSearch } from '../../hooks/queries';
 import { useDebounced } from '../../hooks/useDebounced';
 import { useRecentSearch } from '../../store/recent-search';
+import { useLayout } from '../../hooks/useLayout';
 import { colors, fonts, MIN_TOUCH, radius, space, type as t } from '../../theme';
 
 const SUGGESTIONS = ['토끼', '바다', '잠', '친구', '양치', '무지개'];
@@ -20,6 +21,7 @@ export default function Search() {
   const term = useDebounced(text.trim(), 300);
   const { data, isFetching, isError, error, refetch } = useSearch(term, sort);
   const recent = useRecentSearch();
+  const cols = useLayout().listColumns;
   const inputRef = useRef<ComponentRef<typeof TextInput>>(null);
 
   // 결과가 나온 검색어는 최근 검색어에 남긴다
@@ -102,7 +104,10 @@ export default function Search() {
           <FlatList
             data={data.items}
             keyExtractor={(b) => b.id}
-            renderItem={({ item }) => <BookRow book={item} />}
+            key={cols}
+          numColumns={cols}
+          columnWrapperStyle={cols > 1 ? { gap: space.md } : undefined}
+          renderItem={({ item }) => <BookRow book={item} half={cols > 1} />}
             keyboardShouldPersistTaps="handled"
             onScrollBeginDrag={Keyboard.dismiss}
             contentContainerStyle={{ padding: space.xl, gap: space.md, paddingBottom: space.xxxl }}

@@ -16,6 +16,9 @@ import { COMMERCE_STORE } from './commerce/commerce.store';
 import { MemoryCommerceStore } from './commerce/memory-commerce.store';
 import { PgCommerceStore } from './commerce/pg-commerce.store';
 import type { PaymentProvider } from './commerce/providers/payment-provider';
+import { SubscriptionController } from './commerce/subscription.controller';
+import { SubscriptionService } from './commerce/subscription.service';
+import { CLOCK, systemClock, type Clock } from './common/clock';
 
 /**
  * DATABASE_URL 이 있으면 PostgreSQL, 없으면 시드 데이터로 동작한다.
@@ -23,7 +26,7 @@ import type { PaymentProvider } from './commerce/providers/payment-provider';
  */
 @Module({})
 export class AppModule {
-  static register(databaseUrl = process.env.DATABASE_URL, providers: PaymentProvider[] = defaultProviders()): DynamicModule {
+  static register(databaseUrl = process.env.DATABASE_URL, providers: PaymentProvider[] = defaultProviders(), clock: Clock = systemClock): DynamicModule {
     const imports = databaseUrl
       ? [
           TypeOrmModule.forRoot({
@@ -41,7 +44,7 @@ export class AppModule {
     return {
       module: AppModule,
       imports,
-      controllers: [HealthController, CatalogController, AuthController, CommerceController],
+      controllers: [HealthController, CatalogController, AuthController, CommerceController, SubscriptionController],
       providers: [
         CatalogService,
         repo,
@@ -50,6 +53,8 @@ export class AppModule {
         UsersService,
         AuthGuard,
         CommerceService,
+        SubscriptionService,
+        { provide: CLOCK, useValue: clock },
       ],
     };
   }

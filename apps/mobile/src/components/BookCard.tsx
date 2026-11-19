@@ -30,12 +30,12 @@ export function BookCard({ book, width }: { book: BookSummary; width: number }) 
 }
 
 /** 세로 목록용 줄 카드 (카테고리·검색 결과) */
-export function BookRow({ book, rank }: { book: BookSummary; rank?: number }) {
+export function BookRow({ book, rank, half }: { book: BookSummary; rank?: number; half?: boolean }) {
   const router = useRouter();
   return (
     <Pressable
       onPress={() => router.push(`/book/${book.id}`)}
-      style={({ pressed }) => [styles.rowCard, pressed && { backgroundColor: colors.surfaceWarm }]}
+      style={({ pressed }) => [styles.rowCard, half && { flex: 1 }, pressed && { backgroundColor: colors.surfaceWarm }]}
       accessibilityRole="button"
       accessibilityLabel={`${rank ? `${rank}위, ` : ''}${book.title}, ${won(book.price)}`}
     >

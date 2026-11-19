@@ -1,5 +1,5 @@
 import { createSign } from 'node:crypto';
-import { ProviderError, type PaymentProvider, type VerifiedPurchase, type VerifyInput } from './payment-provider';
+import { ProviderError, type PaymentProvider, type VerifiedPurchase, type VerifiedSubscription, type VerifyInput } from './payment-provider';
 
 interface ServiceAccount {
   client_email: string;
@@ -81,5 +81,49 @@ export class GooglePlayBillingProvider implements PaymentProvider {
       await this.fetchImpl(`${base}:acknowledge`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: '{}' });
     }
     return { transactionId: p.orderId ?? input.purchaseToken, productId: input.productId, state, amount: null, orderId: null };
+  }
+
+  /** 구독 검증 (purchases.subscriptionsv2) — 상태·만료일을 스토어에서 확인하고 미확인이면 확인 처리 */
+  async verifySubscription(input: { userId: string; productId: string | null; purchaseToken: string }): Promise<VerifiedSubscription> {
+    if (!this.isEnabled()) throw new ProviderError('NOT_CONFIGURED', '구글 플레이 결제가 아직 설정되지 않았어요.');
+    const pkg = encodeURIComponent(process.env.GOOGLE_PLAY_PACKAGE_NAME!);
+    const token = await this.accessToken();
+    const res = await this.fetchImpl(
+      `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${pkg}/purchases/subscriptionsv2/tokens/${encodeURIComponent(input.purchaseToken)}`,
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+    if (res.status === 400 || res.status === 404 || res.status === 410) throw new ProviderError('INVALID_RECEIPT', '구독 영수증을 확인할 수 없어요.');
+    if (!res.ok) throw new ProviderError('PROVIDER_UNAVAILABLE', '구글 결제 서버에 연결하지 못했어요.');
+    const s = (await res.json()) as {
+      subscriptionState?: string;
+      startTime?: string;
+      latestOrderId?: string;
+      acknowledgementState?: string;
+      lineItems?: { productId: string; expiryTime: string }[];
+      externalAccountIdentifiers?: { obfuscatedExternalAccountId?: string };
+    };
+    const acct = s.externalAccountIdentifiers?.obfuscatedExternalAccountId;
+    if (acct && acct !== input.userId) throw new ProviderError('INVALID_RECEIPT', '다른 계정의 영수증이에요.');
+    const item = s.lineItems?.[0];
+    if (!item) throw new ProviderError('INVALID_RECEIPT', '구독 영수증을 확인할 수 없어요.');
+    const state = s.subscriptionState === 'SUBSCRIPTION_STATE_ACTIVE' || s.subscriptionState === 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD'
+      ? 'ACTIVE'
+      : s.subscriptionState === 'SUBSCRIPTION_STATE_PENDING' ? 'PENDING' : 'EXPIRED';
+    if (state === 'ACTIVE' && s.acknowledgementState === 'ACKNOWLEDGEMENT_STATE_PENDING') {
+      await this.fetchImpl(
+        `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${pkg}/purchases/subscriptions/${encodeURIComponent(item.productId)}/tokens/${encodeURIComponent(input.purchaseToken)}:acknowledge`,
+        { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: '{}' },
+      );
+    }
+    const end = new Date(item.expiryTime);
+    // 갱신마다 주문번호 끝이 ..0, ..1 처럼 바뀌므로 거래번호로 쓰기 좋다
+    return {
+      transactionId: s.latestOrderId ?? `${input.purchaseToken}:${item.expiryTime}`,
+      productId: item.productId,
+      state,
+      periodStart: new Date(end.getTime() - 30 * 24 * 3600 * 1000),
+      periodEnd: end,
+      amount: null,
+    };
   }
 }

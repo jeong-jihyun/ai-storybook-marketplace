@@ -28,7 +28,7 @@ export default function Orders() {
   if (!loggedIn) return <Redirect href={{ pathname: '/login', params: { next: '/orders' } }} />;
 
   return (
-    <Screen edges={['bottom']}>
+    <Screen edges={['bottom']} form>
       <Stack.Screen options={{ title: '주문·결제 내역' }} />
       {q.isLoading ? (
         <Loading />

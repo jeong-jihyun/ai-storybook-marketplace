@@ -59,3 +59,10 @@ export const useOwnedPages = (bookId: string) => {
   const uid = useUserId();
   return useQuery({ queryKey: ['owned-pages', bookId, uid], queryFn: () => api.ownedPages(bookId), enabled: !!bookId && uid !== 'guest' });
 };
+
+// ───── 구독 ─────
+export const usePlans = () => useQuery({ queryKey: ['plans'], queryFn: api.plans, staleTime: 10 * 60_000 });
+export const useMySubscription = () => {
+  const uid = useUserId();
+  return useQuery({ queryKey: ['subscription', uid], queryFn: async () => (await api.mySubscription()).subscription, enabled: uid !== 'guest' });
+};

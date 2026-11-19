@@ -91,7 +91,7 @@ export default function Account() {
     ) : null;
 
   return (
-    <Screen edges={['bottom']}>
+    <Screen edges={['bottom']} form>
       <Stack.Screen options={{ title: '계정 관리' }} />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={{ padding: space.xl, gap: space.lg, paddingBottom: 48 }} keyboardShouldPersistTaps="handled">

@@ -14,7 +14,8 @@ services:
       - ./database/migrations/001_init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
       - ./database/migrations/002_commerce.sql:/docker-entrypoint-initdb.d/02_commerce.sql:ro
       - ./database/migrations/003_lock_tables.sql:/docker-entrypoint-initdb.d/03_lock.sql:ro
-      - ./database/seeds/001_storybooks.sql:/docker-entrypoint-initdb.d/04_seed.sql:ro
+      - ./database/migrations/004_subscription.sql:/docker-entrypoint-initdb.d/04_subscription.sql:ro
+      - ./database/seeds/001_storybooks.sql:/docker-entrypoint-initdb.d/05_seed.sql:ro
   redis:
     image: redis:7-alpine
     ports:

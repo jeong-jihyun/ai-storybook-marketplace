@@ -82,7 +82,7 @@ export default function Result() {
   }
 
   return (
-    <Screen edges={['bottom']}>
+    <Screen edges={['bottom']} form>
       <Stack.Screen options={{ title: '결제 결과', headerLeft: () => null, gestureEnabled: false }} />
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: space.xxl, gap: space.md }}>{body}</View>
     </Screen>

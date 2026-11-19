@@ -61,7 +61,7 @@ export type PaymentResult =
   | { kind: 'TX_USED'; order: OrderRecord } // 다른 주문에 이미 쓰인 거래번호
   | { kind: 'ORDER_CLOSED'; order: OrderRecord }; // 다른 거래로 이미 결제됐거나 취소된 주문
 
-export interface CommerceStore {
+export interface CommerceStore extends SubscriptionStore {
   createUser(u: NewUser): Promise<UserRecord | null>; // 이메일 중복이면 null
   findUserByEmail(email: string): Promise<UserRecord | null>;
   findUserById(id: string): Promise<UserRecord | null>;
@@ -78,6 +78,63 @@ export interface CommerceStore {
 
   listLibrary(userId: string): Promise<{ bookId: string; purchasedAt: Date }[]>;
   ownsBook(userId: string, bookId: string): Promise<boolean>;
+}
+
+// ───── 구독 (월 소장권) ─────
+
+export interface PlanRecord {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  price: number;
+  periodDays: number;
+  creditsPerPeriod: number;
+  storeProductId: string | null;
+  isActive: boolean;
+}
+
+export interface SubscriptionRecord {
+  id: string;
+  userId: string;
+  planId: string;
+  status: 'ACTIVE' | 'EXPIRED';
+  provider: string;
+  currentPeriodStart: Date;
+  currentPeriodEnd: Date;
+  creditsRemaining: number;
+  cancelAtPeriodEnd: boolean;
+  createdAt: Date;
+}
+
+export interface SubscriptionChargeInput {
+  userId: string;
+  plan: PlanRecord;
+  provider: string;
+  transactionId: string;
+  amount: number;
+  periodStart: Date;
+  periodEnd: Date;
+}
+
+export type ChargeResult =
+  | { kind: 'STARTED' | 'RENEWED' | 'ALREADY_APPLIED'; subscription: SubscriptionRecord }
+  | { kind: 'TX_USED' } // 다른 사람·다른 구독에 이미 쓰인 거래번호
+  | { kind: 'ALREADY_SUBSCRIBED'; subscription: SubscriptionRecord }; // 이미 기간이 남은 구독이 있음
+
+export type RedeemResult = 'OK' | 'NO_CREDIT' | 'ALREADY_OWNED' | 'NOT_ACTIVE';
+
+export interface SubscriptionStore {
+  listPlans(): Promise<PlanRecord[]>;
+  findPlan(by: { id?: string; code?: string; productId?: string }): Promise<PlanRecord | null>;
+  findActiveSubscription(userId: string): Promise<SubscriptionRecord | null>;
+  /** 구독 결제 반영: 처음이면 시작, 기간이 이어지면 갱신(소장권 다시 채움). 같은 거래번호는 한 번만 */
+  applyCharge(c: SubscriptionChargeInput): Promise<ChargeResult>;
+  setCancelAtPeriodEnd(subscriptionId: string, value: boolean): Promise<SubscriptionRecord | null>;
+  expire(subscriptionId: string): Promise<void>;
+  /** 소장권 1장으로 책 받기 (트랜잭션: 남은 수 확인 → 차감 → 서재 등록) */
+  redeemCredit(userId: string, subscriptionId: string, bookId: string, now: Date): Promise<RedeemResult>;
+  librarySources(userId: string): Promise<Record<string, 'PURCHASE' | 'SUBSCRIPTION'>>;
 }
 
 export const COMMERCE_STORE = Symbol('COMMERCE_STORE');

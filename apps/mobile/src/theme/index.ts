@@ -47,8 +47,12 @@ export const shadow = Platform.select({
   default: { shadowColor: '#7A6552', shadowOpacity: 0.14, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 3 },
 }) as object;
 
-/** 웹에서 PC 화면으로 열어도 폰 크기로 보이게 하는 최대 폭 */
+/** 세로 화면 최대 폭 (PC 웹에서 세로 창이면 폰 크기로 보이게) */
 export const MAX_APP_WIDTH = 480;
+/** 가로 화면 최대 폭 */
+export const MAX_WIDE_WIDTH = 1100;
+/** 입력 화면(로그인·가입·계정) 최대 폭 — 가로에서도 너무 길게 늘어나지 않게 */
+export const MAX_FORM_WIDTH = 560;
 /** 손가락으로 누르기 쉬운 최소 크기 */
 export const MIN_TOUCH = 48;
 

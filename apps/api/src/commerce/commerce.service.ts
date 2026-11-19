@@ -205,11 +205,12 @@ export class CommerceService {
 
   async library(userId: string): Promise<LibraryItem[]> {
     const rows = await this.store.listLibrary(userId);
+    const sources = await this.store.librarySources(userId);
     const items: LibraryItem[] = [];
     for (const r of rows) {
       const b = await this.catalog.findBookById(r.bookId);
       // 판매 중지(ARCHIVED 등)된 책도 이미 산 사람은 계속 읽을 수 있다
-      if (b) items.push({ book: this.catalogService.toSummary(b), purchasedAt: r.purchasedAt.toISOString() });
+      if (b) items.push({ book: this.catalogService.toSummary(b), purchasedAt: r.purchasedAt.toISOString(), source: sources[r.bookId] ?? 'PURCHASE' });
     }
     return items;
   }

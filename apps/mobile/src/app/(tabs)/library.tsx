@@ -1,22 +1,25 @@
 // SCR-009 내 서재: 구매 권한이 있는 책만
 import { useRouter } from 'expo-router';
-import { FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../components/Button';
 import { ComingSoon } from '../../components/ComingSoon';
 import { Cover } from '../../components/Cover';
 import { LoginPrompt } from '../../components/LoginPrompt';
+import { SubscriptionBanner } from '../../components/SubscriptionBanner';
 import { Screen } from '../../components/Screen';
 import { ErrorView, Loading } from '../../components/States';
 import { useLibrary } from '../../hooks/queries';
 import { useSession } from '../../store/session';
-import { colors, MAX_APP_WIDTH, radius, space, type as t } from '../../theme';
+import { useLayout } from '../../hooks/useLayout';
+import { colors, radius, space, type as t } from '../../theme';
 
 export default function Library() {
   const router = useRouter();
   const user = useSession((s) => s.user);
   const lib = useLibrary();
-  const { width } = useWindowDimensions();
-  const cardW = Math.floor((Math.min(width, MAX_APP_WIDTH) - space.xl * 2 - space.lg) / 2);
+  const layout = useLayout();
+  const cols = layout.gridColumns(space.lg, space.xl);
+  const cardW = Math.floor((layout.contentWidth - space.xl * 2 - space.lg * (cols - 1)) / cols);
 
   if (!user) {
     return (
@@ -36,14 +39,18 @@ export default function Library() {
       <FlatList
         data={lib.data}
         keyExtractor={(x) => x.book.id}
-        numColumns={2}
+        key={cols}
+        numColumns={cols}
         columnWrapperStyle={{ gap: space.lg }}
         contentContainerStyle={{ padding: space.xl, gap: space.xl, paddingBottom: space.xxxl }}
         refreshControl={<RefreshControl refreshing={lib.isRefetching} onRefresh={() => void lib.refetch()} tintColor={colors.primary} />}
         ListHeaderComponent={
           <View style={{ gap: 4 }}>
             <Text style={t.display} accessibilityRole="header">내 서재</Text>
-            <Text style={t.caption}>{lib.data.length ? `구매한 동화 ${lib.data.length}권` : ''}</Text>
+            <Text style={t.caption}>{lib.data.length ? `내 동화 ${lib.data.length}권` : ''}</Text>
+            <View style={{ marginTop: space.sm }}>
+              <SubscriptionBanner compact />
+            </View>
           </View>
         }
         renderItem={({ item }) => (
@@ -57,7 +64,7 @@ export default function Library() {
             <Text style={t.cardTitle} numberOfLines={2}>
               {item.book.title}
             </Text>
-            <Text style={[t.caption, { color: colors.primaryText }]}>📖 읽기</Text>
+            <Text style={[t.caption, { color: colors.primaryText }]}>📖 읽기{item.source === 'SUBSCRIPTION' ? ' · 소장권' : ''}</Text>
           </Pressable>
         )}
         ListEmptyComponent={

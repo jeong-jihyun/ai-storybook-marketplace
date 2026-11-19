@@ -132,4 +132,42 @@ export interface RestoreResult {
 export interface LibraryItem {
   book: BookSummary;
   purchasedAt: string;
+  /** 어떻게 들어왔는지: 구매 / 구독 소장권 */
+  source: 'PURCHASE' | 'SUBSCRIPTION';
+}
+
+// ───── 구독 (월 소장권) ─────
+
+export interface SubscriptionPlan {
+  code: string;
+  name: string;
+  description: string;
+  price: number;
+  periodDays: number;
+  creditsPerPeriod: number;
+  storeProductId: string | null;
+}
+
+export interface MySubscription {
+  id: string;
+  plan: SubscriptionPlan;
+  status: 'ACTIVE' | 'EXPIRED';
+  provider: PaymentProviderName;
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  creditsRemaining: number;
+  /** 해지 예약됨: 기간 끝까지 사용 가능, 이후 자동 결제 안 됨 */
+  cancelAtPeriodEnd: boolean;
+}
+
+export interface SubscriptionVerifyResult {
+  success: boolean;
+  /** STARTED 새로 시작, RENEWED 갱신, ALREADY_APPLIED 이미 반영된 영수증 */
+  result: 'STARTED' | 'RENEWED' | 'ALREADY_APPLIED';
+  subscription: MySubscription;
+}
+
+export interface RedeemCreditResult {
+  bookId: string;
+  creditsRemaining: number;
 }

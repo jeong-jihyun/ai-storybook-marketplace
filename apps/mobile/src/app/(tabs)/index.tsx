@@ -8,8 +8,10 @@ import { BookCard, BookRow } from '../../components/BookCard';
 import { Cover } from '../../components/Cover';
 import { Screen } from '../../components/Screen';
 import { SectionHeader } from '../../components/SectionHeader';
+import { SubscriptionBanner } from '../../components/SubscriptionBanner';
 import { ErrorView, Loading } from '../../components/States';
 import { useHome } from '../../hooks/queries';
+import { useLayout } from '../../hooks/useLayout';
 import { colors, fonts, radius, shadow, space, type as t, won } from '../../theme';
 
 function Rail({ books }: { books: BookSummary[] }) {
@@ -28,6 +30,7 @@ function Rail({ books }: { books: BookSummary[] }) {
 export default function Home() {
   const router = useRouter();
   const { data, isLoading, isError, error, refetch, isRefetching } = useHome();
+  const cols = useLayout().listColumns;
 
   if (isLoading) return <Screen><Loading /></Screen>;
   if (isError || !data) return <Screen><ErrorView message={error?.message} onRetry={refetch} /></Screen>;
@@ -72,6 +75,10 @@ export default function Home() {
           </Pressable>
         ) : null}
 
+        <View style={{ paddingHorizontal: space.xl, marginTop: space.lg }}>
+          <SubscriptionBanner />
+        </View>
+
         <View style={styles.section}>
           <SectionHeader title="어떤 이야기가 좋아요?" onMore={() => router.push('/categories')} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: space.xl, gap: space.md }}>
@@ -103,9 +110,11 @@ export default function Home() {
             emoji="🏆"
             onMore={() => router.push({ pathname: '/category/[slug]', params: { slug: 'all', sort: 'popular' } })}
           />
-          <View style={{ paddingHorizontal: space.xl, gap: space.md }}>
-            {data.popular.slice(0, 3).map((b, i) => (
-              <BookRow key={b.id} book={b} rank={i + 1} />
+          <View style={{ paddingHorizontal: space.xl, gap: space.md, flexDirection: cols > 1 ? 'row' : 'column', flexWrap: 'wrap' }}>
+            {data.popular.slice(0, cols > 1 ? 4 : 3).map((b, i) => (
+              <View key={b.id} style={cols > 1 ? { width: '48.8%' } : undefined}>
+                <BookRow book={b} rank={i + 1} />
+              </View>
             ))}
           </View>
         </View>

@@ -79,6 +79,7 @@ export default function RootLayout() {
         <Stack.Screen name="checkout/result" options={{ title: '결제 결과' }} />
         <Stack.Screen name="orders" options={{ title: '주문·결제 내역' }} />
         <Stack.Screen name="account" options={{ title: '계정 관리' }} />
+        <Stack.Screen name="subscription" options={{ title: '소장권 구독' }} />
       </Stack>
     </QueryClientProvider>
   );

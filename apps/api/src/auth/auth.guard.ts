@@ -43,6 +43,8 @@ export class AuthGuard implements CanActivate {
     const p = verifyToken(token, 'access');
     const user = p ? await this.users.findActiveById(p.sub) : null;
     if (!p || !user || user.tokenVersion !== p.ver) {
+      // 공개 화면(책 상세 등)은 로그인 정보가 틀려도 손님으로 보여 준다 — 보기만 했는데 로그아웃되는 일 방지
+      if (optional) return true;
       throw new UnauthorizedException({ code: 'TOKEN_EXPIRED', message: '다시 로그인해 주세요.' });
     }
     req.user = { id: user.id, email: user.email, role: user.role };

@@ -31,7 +31,7 @@ export default function My() {
   };
 
   return (
-    <Screen>
+    <Screen form>
       <ScrollView contentContainerStyle={{ padding: space.xl, gap: space.lg, paddingBottom: space.xxxl }}>
         <Text style={t.display} accessibilityRole="header">마이</Text>
         {!user ? (
@@ -46,6 +46,7 @@ export default function My() {
               </View>
             </View>
             <Text style={[t.section, { marginTop: space.sm }]}>구매</Text>
+            <MenuRow emoji="🎟️" title="소장권 구독" desc="매달 3권 소장 · 남은 소장권 · 해지" onPress={() => router.push('/subscription')} />
             <MenuRow emoji="🧾" title="주문·결제 내역" desc="구매한 동화와 결제 상태" onPress={() => router.push('/orders')} />
             <MenuRow emoji="🔄" title="구매 복구" desc="새 폰·재설치 후 스토어 구매를 다시 불러오기" onPress={() => setNotice('restore')} />
             <Text style={[t.section, { marginTop: space.sm }]}>보호자 영역</Text>
@@ -60,7 +61,7 @@ export default function My() {
             { emoji: '💬', title: '공지·문의·환불 안내', desc: '이용 안내와 1:1 문의' },
           ]}
         />
-        <Text style={[t.caption, { textAlign: 'center' }]}>앱 버전 {Constants.expoConfig?.version ?? '0.2.0'} · 2단계(판매)</Text>
+        <Text style={[t.caption, { textAlign: 'center' }]}>앱 버전 {Constants.expoConfig?.version ?? '0.3.0'} · 구독·가로 화면</Text>
       </ScrollView>
       <Notice
         visible={notice === 'restore'}

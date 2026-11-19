@@ -16,7 +16,7 @@ if (process.env.TEST_DATABASE_URL) targets.push(['PostgreSQL', process.env.TEST_
 async function resetDb(url: string) {
   const c = new Client({ connectionString: url });
   await c.connect();
-  await c.query('TRUNCATE library, payments, order_items, orders, reading_progress, wishlists, reviews, refunds, child_profiles, users CASCADE');
+  await c.query('TRUNCATE subscription_charges, subscriptions, library, payments, order_items, orders, reading_progress, wishlists, reviews, refunds, child_profiles, users CASCADE');
   for (const b of seed.books) await c.query('UPDATE books SET sales_count = $2 WHERE id = $1', [b.id, b.salesCount]);
   await c.end();
 }

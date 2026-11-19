@@ -6,6 +6,8 @@ const KEY = 'donghwasup.session';
 
 interface SessionState {
   hydrated: boolean;
+  /** 로그인이 만료되어 자동으로 풀렸는지 (로그인 화면 안내용) */
+  expired: boolean;
   user: Me | null;
   accessToken: string | null;
   refreshToken: string | null;
@@ -17,10 +19,12 @@ interface SessionState {
   setParent: (token: string, ttlSec: number) => void;
   validParentToken: () => string | null;
   clear: () => Promise<void>;
+  expire: () => Promise<void>;
 }
 
 export const useSession = create<SessionState>((set, get) => ({
   hydrated: false,
+  expired: false,
   user: null,
   accessToken: null,
   refreshToken: null,
@@ -38,7 +42,7 @@ export const useSession = create<SessionState>((set, get) => ({
     set({ hydrated: true });
   },
   async setTokens(t) {
-    set({ user: t.user, accessToken: t.accessToken, refreshToken: t.refreshToken });
+    set({ user: t.user, accessToken: t.accessToken, refreshToken: t.refreshToken, expired: false });
     await secureStorage.set(KEY, JSON.stringify({ user: t.user, accessToken: t.accessToken, refreshToken: t.refreshToken }));
   },
   setUser(u) {
@@ -57,5 +61,10 @@ export const useSession = create<SessionState>((set, get) => ({
   async clear() {
     set({ user: null, accessToken: null, refreshToken: null, parent: null });
     await secureStorage.set(KEY, null);
+  },
+  async expire() {
+    if (!get().user) return;
+    await get().clear();
+    set({ expired: true });
   },
 }));

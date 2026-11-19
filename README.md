@@ -4,7 +4,7 @@ AI가 만들고 사람이 검수한 어린이 동화책(3~10세)을 검색·미�
 설계서: [docs/00-design-spec-v1.0.docx](docs/00-design-spec-v1.0.docx)
 
 **현재 단계: 2단계(판매) 완료** — 보호자 가입·로그인, 보호자 PIN, 주문, 테스트 결제 → 서버 검증 → 내 서재, 끝까지 읽기.
-결과 보고: [1단계](docs/10-stage1-report.md) · [2단계](docs/11-stage2-report.md)
+결과 보고: [1단계](docs/10-stage1-report.md) · [2단계](docs/11-stage2-report.md) · [구독·가로 화면](docs/12-subscription-landscape.md)
 
 ## 구성
 ```
@@ -48,6 +48,10 @@ docker compose up -d               # 테이블·샘플 데이터 자동 생성
 $env:DATABASE_URL="postgres://storybook:storybook@localhost:5432/storybook"
 pnpm api:dev
 ```
+
+### 구독 (월 소장권)
+- 월 6,900원 → 매달 소장권 3권. 소장권으로 받은 책은 해지해도 내 서재에 남습니다. 남은 소장권은 다음 달로 넘어가지 않습니다.
+- 요금제는 DB `subscription_plans` 표에 있어 가격·권수를 바꿀 수 있습니다.
 
 ### 결제 방식
 - 지금은 **테스트 결제**(돈이 나가지 않음)로 주문 → 영수증 → 서버 검증 → 내 서재 흐름 전체가 동작합니다.

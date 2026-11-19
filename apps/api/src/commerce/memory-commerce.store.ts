@@ -1,6 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import type { CommerceStore, NewUser, OrderRecord, PaymentInput, PaymentResult, UserPatch, UserRecord } from './commerce.store';
+import type {
+  ChargeResult,
+  CommerceStore,
+  NewUser,
+  OrderRecord,
+  PaymentInput,
+  PaymentResult,
+  PlanRecord,
+  RedeemResult,
+  SubscriptionChargeInput,
+  SubscriptionRecord,
+  UserPatch,
+  UserRecord,
+} from './commerce.store';
 
 /** DB 없이 메모리에 저장 (서버를 다시 켜면 사라짐 — 로컬 확인·테스트용) */
 @Injectable()
@@ -9,6 +22,22 @@ export class MemoryCommerceStore implements CommerceStore {
   private orders = new Map<string, OrderRecord>();
   private txIndex = new Map<string, string>(); // provider:tx → orderId
   private library = new Map<string, Map<string, Date>>(); // userId → bookId → purchasedAt
+  private sources = new Map<string, 'PURCHASE' | 'SUBSCRIPTION'>(); // userId:bookId → 출처
+  private plans: PlanRecord[] = [
+    {
+      id: randomUUID(),
+      code: 'monthly_3',
+      name: '소장권 구독',
+      description: '매달 동화 3권을 골라 내 서재에 평생 소장해요.',
+      price: 6900,
+      periodDays: 30,
+      creditsPerPeriod: 3,
+      storeProductId: 'storybook_sub_monthly_3',
+      isActive: true,
+    },
+  ];
+  private subs = new Map<string, SubscriptionRecord>();
+  private charges = new Map<string, string>(); // provider:tx → subscriptionId
 
   async createUser(u: NewUser) {
     const email = u.email.toLowerCase();
@@ -113,5 +142,89 @@ export class MemoryCommerceStore implements CommerceStore {
 
   async ownsBook(userId: string, bookId: string) {
     return this.library.get(userId)?.has(bookId) ?? false;
+  }
+
+  // ───── 구독
+  async listPlans() {
+    return this.plans.filter((p) => p.isActive).map((p) => ({ ...p }));
+  }
+
+  async findPlan(by: { id?: string; code?: string; productId?: string }) {
+    const p = this.plans.find((x) => (by.id && x.id === by.id) || (by.code && x.code === by.code) || (by.productId && x.storeProductId === by.productId));
+    return p ? { ...p } : null;
+  }
+
+  async findActiveSubscription(userId: string) {
+    const s = [...this.subs.values()].find((x) => x.userId === userId && x.status === 'ACTIVE');
+    return s ? { ...s } : null;
+  }
+
+  async applyCharge(c: SubscriptionChargeInput): Promise<ChargeResult> {
+    const key = `${c.provider}:${c.transactionId}`;
+    const usedBy = this.charges.get(key);
+    if (usedBy) {
+      const s = this.subs.get(usedBy)!;
+      return s.userId === c.userId ? { kind: 'ALREADY_APPLIED', subscription: { ...s } } : { kind: 'TX_USED' };
+    }
+    const active = [...this.subs.values()].find((x) => x.userId === c.userId && x.status === 'ACTIVE');
+    if (active) {
+      if (c.periodEnd.getTime() <= active.currentPeriodEnd.getTime()) return { kind: 'ALREADY_SUBSCRIBED', subscription: { ...active } };
+      Object.assign(active, {
+        planId: c.plan.id,
+        provider: c.provider,
+        currentPeriodStart: c.periodStart,
+        currentPeriodEnd: c.periodEnd,
+        creditsRemaining: c.plan.creditsPerPeriod,
+        cancelAtPeriodEnd: false,
+      });
+      this.charges.set(key, active.id);
+      return { kind: 'RENEWED', subscription: { ...active } };
+    }
+    const sub: SubscriptionRecord = {
+      id: randomUUID(),
+      userId: c.userId,
+      planId: c.plan.id,
+      status: 'ACTIVE',
+      provider: c.provider,
+      currentPeriodStart: c.periodStart,
+      currentPeriodEnd: c.periodEnd,
+      creditsRemaining: c.plan.creditsPerPeriod,
+      cancelAtPeriodEnd: false,
+      createdAt: new Date(),
+    };
+    this.subs.set(sub.id, sub);
+    this.charges.set(key, sub.id);
+    return { kind: 'STARTED', subscription: { ...sub } };
+  }
+
+  async setCancelAtPeriodEnd(subscriptionId: string, value: boolean) {
+    const s = this.subs.get(subscriptionId);
+    if (!s || s.status !== 'ACTIVE') return null;
+    s.cancelAtPeriodEnd = value;
+    return { ...s };
+  }
+
+  async expire(subscriptionId: string) {
+    const s = this.subs.get(subscriptionId);
+    if (s) s.status = 'EXPIRED';
+  }
+
+  async redeemCredit(userId: string, subscriptionId: string, bookId: string, now: Date): Promise<RedeemResult> {
+    const s = this.subs.get(subscriptionId);
+    if (!s || s.userId !== userId || s.status !== 'ACTIVE' || s.currentPeriodEnd.getTime() <= now.getTime()) return 'NOT_ACTIVE';
+    const lib = this.library.get(userId) ?? new Map<string, Date>();
+    if (lib.has(bookId)) return 'ALREADY_OWNED';
+    if (s.creditsRemaining <= 0) return 'NO_CREDIT';
+    s.creditsRemaining -= 1;
+    lib.set(bookId, now);
+    this.library.set(userId, lib);
+    this.sources.set(`${userId}:${bookId}`, 'SUBSCRIPTION');
+    return 'OK';
+  }
+
+  async librarySources(userId: string) {
+    const out: Record<string, 'PURCHASE' | 'SUBSCRIPTION'> = {};
+    for (const bookId of this.library.get(userId)?.keys() ?? []) out[bookId] = this.sources.get(`${userId}:${bookId}`) ?? 'PURCHASE';
+    return out;
   }
 }

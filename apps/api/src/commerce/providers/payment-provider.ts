@@ -23,10 +23,21 @@ export class ProviderError extends Error {
   }
 }
 
+export interface VerifiedSubscription {
+  transactionId: string; // 이번 결제(시작·갱신) 거래번호
+  productId: string;
+  state: 'ACTIVE' | 'EXPIRED' | 'PENDING';
+  periodStart: Date;
+  periodEnd: Date;
+  amount: number | null;
+}
+
 export interface PaymentProvider {
   readonly name: ProviderName;
   /** 운영 키가 설정되어 사용할 수 있는지 */
   isEnabled(): boolean;
   /** 스토어 서버에 직접 물어 영수증을 검증한다 (앱이 보낸 값은 믿지 않음) */
   verify(input: VerifyInput): Promise<VerifiedPurchase>;
+  /** 구독 영수증 검증 (기간·상태를 스토어에서 확인) */
+  verifySubscription(input: { userId: string; productId: string | null; purchaseToken: string }): Promise<VerifiedSubscription>;
 }

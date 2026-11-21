@@ -86,6 +86,7 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard, moti
       getTime={player.getTime}
       label={`${page.pageNumber}쪽 그림`}
       motion={motion}
+      layers={page.scene?.layers.map((l) => ({ id: l.id, uri: resolveAsset(l.url), px: l.px, py: l.py, motion: l.motion }))}
     />
   );
   const renderText = (page: BookPage, style: React.ComponentProps<typeof NarratedText>['style']) => {

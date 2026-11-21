@@ -197,3 +197,108 @@ export function estimateDuration(text: string): number {
   const chars = text.replace(/\s/g, '').length;
   return Math.max(6, Math.min(40, chars * 0.17));
 }
+
+// ───── 층 장면: 층 하나의 변환을 (t, 쪽 길이 D) 로 계산 ─────
+
+export type LayerMotionKind = 'drift' | 'slide' | 'bob' | 'sway' | 'breathe' | 'blink' | 'twinkle' | 'rise' | 'spin' | 'ramp';
+export interface LayerMotionSpec {
+  kind: LayerMotionKind;
+  amp?: number;
+  period?: number;
+  phase?: number;
+  dx?: number;
+  dy?: number;
+  from?: [number, number];
+  to?: [number, number];
+  start?: number;
+  end?: number;
+  dur?: number;
+  opFrom?: number;
+  opTo?: number;
+}
+export interface LayerState {
+  /** 그림 너비 대비 */
+  tx: number;
+  /** 그림 높이 대비 */
+  ty: number;
+  rotateDeg: number;
+  scale: number;
+  opacity: number;
+}
+
+const easeInOut = (p: number) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2);
+const frac = (x: number) => x - Math.floor(x);
+
+/**
+ * 층 하나의 모양을 계산한다. 여러 움직임은 겹쳐서(이동·각도는 더하고, 크기·투명도는 곱해서) 적용.
+ * t: 재생 위치(초), D: 이 쪽의 길이(초). reduced(모션 줄이기)면 가만히 두고 blink·rise 층은 숨긴다.
+ */
+export function layerState(motions: LayerMotionSpec[], t: number, D: number, reduced = false): LayerState {
+  const st: LayerState = { tx: 0, ty: 0, rotateDeg: 0, scale: 1, opacity: 1 };
+  const dur = Math.max(1, D);
+  const prog = clamp01(t / dur);
+  for (const m of motions) {
+    const period = Math.max(0.2, m.period ?? 6);
+    const phase = m.phase ?? 0;
+    const amp = m.amp ?? 0;
+    switch (m.kind) {
+      case 'blink':
+        if (reduced) st.opacity *= 0;
+        else st.opacity *= frac(t / period + phase) * period < (m.dur ?? 0.16) ? 1 : 0;
+        break;
+      case 'rise': {
+        if (reduced) {
+          st.opacity *= 0;
+          break;
+        }
+        const u = frac(t / period + phase);
+        st.ty += -amp * u;
+        st.opacity *= Math.sin(Math.PI * u);
+        break;
+      }
+      case 'ramp': {
+        const a = m.start ?? 0;
+        const b = Math.max(a + 0.001, m.end ?? 1);
+        const p = reduced ? 0 : clamp01((prog - a) / (b - a));
+        st.opacity *= lerp(m.opFrom ?? 0, m.opTo ?? 1, p);
+        break;
+      }
+      case 'slide': {
+        if (reduced) break;
+        const a = m.start ?? 0;
+        const b = Math.max(a + 0.001, m.end ?? 1);
+        const p = easeInOut(clamp01((prog - a) / (b - a)));
+        const f = m.from ?? [0, 0];
+        const to = m.to ?? [0, 0];
+        st.tx += lerp(f[0], to[0], p);
+        st.ty += lerp(f[1], to[1], p);
+        break;
+      }
+      case 'drift':
+        if (!reduced) {
+          st.tx += (m.dx ?? 0) * prog;
+          st.ty += (m.dy ?? 0) * prog;
+        }
+        break;
+      case 'bob':
+        if (!reduced) st.ty += Math.sin((t / period + phase) * TAU) * amp;
+        break;
+      case 'sway':
+        if (!reduced) st.rotateDeg += Math.sin((t / period + phase) * TAU) * amp;
+        break;
+      case 'breathe':
+        if (!reduced) st.scale *= 1 + Math.sin((t / period + phase) * TAU) * amp;
+        break;
+      case 'twinkle':
+        if (!reduced) st.opacity *= 1 - amp * (0.5 + 0.5 * Math.sin((t / period + phase) * TAU));
+        break;
+      case 'spin': {
+        // end 가 있으면 그 시점(쪽 길이 비율)까지만 돌고 멈춘다 (기차가 서면 바퀴도 멈춤)
+        const te = m.end !== undefined ? Math.min(t, m.end * dur) : t;
+        if (!reduced) st.rotateDeg += ((te / period + phase) * 360) % 360;
+        break;
+      }
+    }
+  }
+  return st;
+}

@@ -43,6 +43,53 @@ export interface BookPage {
   pageNumber: number;
   content: string;
   imageUrl: string;
+  /** 층으로 나뉜 움직이는 장면 (있으면 앱이 imageUrl 대신 이걸 움직여 보여 준다) */
+  scene?: PageScene;
+}
+
+// ───── 층 장면 (캐릭터·배경을 따로 움직이는 그림) ─────
+
+export type LayerMotionKind = 'drift' | 'slide' | 'bob' | 'sway' | 'breathe' | 'blink' | 'twinkle' | 'rise' | 'spin' | 'ramp';
+
+/**
+ * 층 하나의 움직임. 모든 값은 '쪽 길이 D 와 재생 위치 t' 만으로 계산돼서, 멈추면 멈추고 되감으면 같은 모습이에요.
+ * 좌표·크기는 그림 너비·높이에 대한 비율, 각도는 도(°), 시간은 초, start/end 는 쪽 길이에 대한 비율(0~1).
+ */
+export interface LayerMotion {
+  kind: LayerMotionKind;
+  /** bob/rise: 높이 비율 · sway/spin 제외: 각도(도) · breathe: 크기 변화 비율 · twinkle: 깜빡임 깊이 0~1 */
+  amp?: number;
+  period?: number;
+  /** 0~1, 시작 위치를 어긋나게 */
+  phase?: number;
+  /** drift: 쪽 전체 동안 움직일 거리(너비·높이 비율) */
+  dx?: number;
+  dy?: number;
+  /** slide: 시작/끝 위치(비율) */
+  from?: [number, number];
+  to?: [number, number];
+  /** slide/ramp 가 일어나는 구간 (쪽 길이 비율) */
+  start?: number;
+  end?: number;
+  /** blink: 눈 감는 시간(초) */
+  dur?: number;
+  /** ramp: 시작/끝 투명도 */
+  opFrom?: number;
+  opTo?: number;
+}
+
+export interface SceneLayer {
+  id: string;
+  /** 투명 PNG 주소 (서버가 절대/상대 주소로 채워 줌) */
+  url: string;
+  /** 회전·확대의 중심 (그림 비율, 기본 0.5 0.5) */
+  px?: number;
+  py?: number;
+  motion: LayerMotion[];
+}
+
+export interface PageScene {
+  layers: SceneLayer[];
 }
 
 export interface BookPreview {

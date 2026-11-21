@@ -1,8 +1,18 @@
 import { Image } from 'expo-image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
-import { cameraAt, motionFor, particlesAt, type MotionOverride } from '../motion/engine';
+import { cameraAt, layerState, motionFor, particlesAt, type MotionOverride } from '../motion/engine';
+import type { LayerMotion } from '@storybook/shared-types';
 import { colors, radius } from '../theme';
+
+/** 층 장면의 한 층 (uri 는 이미 앱이 내려받을 수 있는 주소) */
+export interface ArtLayer {
+  id: string;
+  uri: string;
+  px?: number;
+  py?: number;
+  motion: LayerMotion[];
+}
 
 type Subscribe = (l: (t: number) => void) => () => void;
 
@@ -37,6 +47,7 @@ export function StoryArt({
   getTime,
   label,
   motion,
+  layers,
 }: {
   uri: string;
   bookId: string;
@@ -51,6 +62,8 @@ export function StoryArt({
   label: string;
   /** 관리자가 정한 이 책의 움직임 설정 (없으면 자동) */
   motion?: MotionOverride;
+  /** 층으로 나뉜 장면 (있으면 통그림 대신 층마다 따로 움직인다) */
+  layers?: ArtLayer[];
 }) {
   const t = useClock(subscribe, getTime, active);
   const cfg = useMemo(() => motionFor(bookId, pageNumber, motion), [bookId, pageNumber, motion?.enabled, motion?.camera, motion?.particles]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -67,17 +80,51 @@ export function StoryArt({
 
   return (
     <Animated.View style={[styles.frame, { width, height, opacity: fade }]}>
-      <Image
-        source={{ uri }}
-        style={{
-          width,
-          height,
-          transform: [{ translateX: cam.tx * width }, { translateY: cam.ty * height }, { rotate: `${cam.rotateDeg}deg` }, { scale: cam.scale }],
-        }}
-        contentFit="cover"
-        transition={200}
-        accessibilityLabel={label}
-      />
+      {layers && layers.length > 0 ? (
+        <View
+          style={{
+            width,
+            height,
+            transform: [{ translateX: cam.tx * width }, { translateY: cam.ty * height }, { rotate: `${cam.rotateDeg}deg` }, { scale: cam.scale }],
+          }}
+          accessibilityLabel={label}
+        >
+          {layers.map((l) => {
+            const st = layerState(l.motion, t, duration, reduced);
+            return (
+              <Image
+                key={l.id}
+                source={{ uri: l.uri }}
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  width,
+                  height,
+                  opacity: st.opacity,
+                  transformOrigin: `${(l.px ?? 0.5) * 100}% ${(l.py ?? 0.5) * 100}%`,
+                  transform: [{ translateX: st.tx * width }, { translateY: st.ty * height }, { rotate: `${st.rotateDeg}deg` }, { scale: st.scale }],
+                }}
+                contentFit="fill"
+                transition={0}
+              />
+            );
+          })}
+        </View>
+      ) : (
+        <Image
+          source={{ uri }}
+          style={{
+            width,
+            height,
+            transform: [{ translateX: cam.tx * width }, { translateY: cam.ty * height }, { rotate: `${cam.rotateDeg}deg` }, { scale: cam.scale }],
+          }}
+          contentFit="cover"
+          transition={200}
+          accessibilityLabel={label}
+        />
+      )}
       {ps.length > 0 ? (
         <View style={StyleSheet.absoluteFill} pointerEvents="none">
           {ps.map((p, i) => (

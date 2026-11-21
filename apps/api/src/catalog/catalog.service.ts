@@ -1,6 +1,7 @@
 import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import type { BookDetail, BookPage, BookPreview, BookSummary, Category, HomeFeed, MotionSettings, Paginated } from '@storybook/shared-types';
 import { assetUrl } from '../common/asset-url';
+import { sceneFor } from './scenes';
 import { COMMERCE_STORE, type CommerceStore } from '../commerce/commerce.store';
 import { CATALOG_REPOSITORY, type BookQuery, type BookRecord, type CatalogRepository, type PageRecord } from './catalog.repository';
 
@@ -26,7 +27,8 @@ export class CatalogService {
   }
 
   private toPage(p: PageRecord): BookPage {
-    return { bookId: p.bookId, pageNumber: p.pageNumber, content: p.content, imageUrl: assetUrl(p.imageKey) };
+    const scene = sceneFor(p.bookId, p.pageNumber, p.imageKey);
+    return { bookId: p.bookId, pageNumber: p.pageNumber, content: p.content, imageUrl: assetUrl(p.imageKey), ...(scene ? { scene } : {}) };
   }
 
   async categories(): Promise<Category[]> {

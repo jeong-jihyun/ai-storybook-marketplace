@@ -1,0 +1,1961 @@
+{
+ "b0000001-5b00-4c00-8000-000000000001": {
+  "pages": {
+   "1": {
+    "base": "books/b0000001-5b00-4c00-8000-000000000001/page-01.png",
+    "layers": [
+     {
+      "id": "win_sky",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-win_sky.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "win_stars",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-win_stars.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.7,
+        "period": 3.2
+       }
+      ]
+     },
+     {
+      "id": "moon",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-moon.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 7
+       },
+       {
+        "kind": "breathe",
+        "amp": 0.012,
+        "period": 5
+       }
+      ]
+     },
+     {
+      "id": "room",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-room.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "win_frame",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-win_frame.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "curtains",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-curtains.png",
+      "px": 0.75,
+      "py": 0.1267,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 1.4,
+        "period": 6
+       }
+      ]
+     },
+     {
+      "id": "bed",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-bed.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "tori_ear_l",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-tori_ear_l.png",
+      "px": 0.19,
+      "py": 0.5367,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 4,
+        "period": 4.2,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_r",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-tori_ear_r.png",
+      "px": 0.24,
+      "py": 0.5367,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 4,
+        "period": 4.55,
+        "phase": 0.35
+       }
+      ]
+     },
+     {
+      "id": "tori_head",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-tori_head.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "tori_eyes_closed",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-tori_eyes_closed.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "blink",
+        "period": 3.6,
+        "dur": 0.18,
+        "phase": 0.12
+       }
+      ]
+     },
+     {
+      "id": "blanket",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-blanket.png",
+      "px": 0.4,
+      "py": 0.74,
+      "motion": [
+       {
+        "kind": "breathe",
+        "amp": 0.012,
+        "period": 4.2
+       }
+      ]
+     },
+     {
+      "id": "qmark0",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-qmark0.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "rise",
+        "amp": 0.14,
+        "period": 4.0,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "qmark1",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p1-qmark1.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "rise",
+        "amp": 0.14,
+        "period": 4.0,
+        "phase": 0.5
+       }
+      ]
+     }
+    ]
+   },
+   "2": {
+    "base": "books/b0000001-5b00-4c00-8000-000000000001/page-02.png",
+    "layers": [
+     {
+      "id": "sky",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-sky.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "stars_a",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-stars_a.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.65,
+        "period": 3.4,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "stars_b",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-stars_b.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.7,
+        "period": 4.6,
+        "phase": 0.45
+       }
+      ]
+     },
+     {
+      "id": "moon",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-moon.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 8
+       }
+      ]
+     },
+     {
+      "id": "hills_far",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-hills_far.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "drift",
+        "dx": -0.015
+       }
+      ]
+     },
+     {
+      "id": "ground",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-ground.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "house",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-house.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "house_light",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-house_light.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.25,
+        "period": 3.8
+       }
+      ]
+     },
+     {
+      "id": "train",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-train.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "slide",
+        "from": [
+         -0.62,
+         0
+        ],
+        "to": [
+         0,
+         0
+        ],
+        "start": 0.0,
+        "end": 0.55
+       }
+      ]
+     },
+     {
+      "id": "wheel0",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-wheel0.png",
+      "px": 0.255,
+      "py": 0.7637,
+      "motion": [
+       {
+        "kind": "slide",
+        "from": [
+         -0.62,
+         0
+        ],
+        "to": [
+         0,
+         0
+        ],
+        "start": 0.0,
+        "end": 0.55
+       },
+       {
+        "kind": "spin",
+        "period": 1.3,
+        "end": 0.55
+       }
+      ]
+     },
+     {
+      "id": "wheel1",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-wheel1.png",
+      "px": 0.4012,
+      "py": 0.7637,
+      "motion": [
+       {
+        "kind": "slide",
+        "from": [
+         -0.62,
+         0
+        ],
+        "to": [
+         0,
+         0
+        ],
+        "start": 0.0,
+        "end": 0.55
+       },
+       {
+        "kind": "spin",
+        "period": 1.3,
+        "end": 0.55
+       }
+      ]
+     },
+     {
+      "id": "wheel2",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-wheel2.png",
+      "px": 0.5138,
+      "py": 0.7637,
+      "motion": [
+       {
+        "kind": "slide",
+        "from": [
+         -0.62,
+         0
+        ],
+        "to": [
+         0,
+         0
+        ],
+        "start": 0.0,
+        "end": 0.55
+       },
+       {
+        "kind": "spin",
+        "period": 1.3,
+        "end": 0.55
+       }
+      ]
+     },
+     {
+      "id": "wheel3",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-wheel3.png",
+      "px": 0.6262,
+      "py": 0.7637,
+      "motion": [
+       {
+        "kind": "slide",
+        "from": [
+         -0.62,
+         0
+        ],
+        "to": [
+         0,
+         0
+        ],
+        "start": 0.0,
+        "end": 0.55
+       },
+       {
+        "kind": "spin",
+        "period": 1.3,
+        "end": 0.55
+       }
+      ]
+     },
+     {
+      "id": "smoke0",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-smoke0.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "slide",
+        "from": [
+         -0.62,
+         0
+        ],
+        "to": [
+         0,
+         0
+        ],
+        "start": 0.0,
+        "end": 0.55
+       },
+       {
+        "kind": "rise",
+        "amp": 0.28,
+        "period": 3.3,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "smoke1",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-smoke1.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "slide",
+        "from": [
+         -0.62,
+         0
+        ],
+        "to": [
+         0,
+         0
+        ],
+        "start": 0.0,
+        "end": 0.55
+       },
+       {
+        "kind": "rise",
+        "amp": 0.28,
+        "period": 3.3,
+        "phase": 0.34
+       }
+      ]
+     },
+     {
+      "id": "smoke2",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-smoke2.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "slide",
+        "from": [
+         -0.62,
+         0
+        ],
+        "to": [
+         0,
+         0
+        ],
+        "start": 0.0,
+        "end": 0.55
+       },
+       {
+        "kind": "rise",
+        "amp": 0.28,
+        "period": 3.3,
+        "phase": 0.68
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_l",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-tori_ear_l.png",
+      "px": 0.7592,
+      "py": 0.6458,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 5,
+        "period": 4.2,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_r",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-tori_ear_r.png",
+      "px": 0.7283,
+      "py": 0.6458,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 5,
+        "period": 4.55,
+        "phase": 0.35
+       }
+      ]
+     },
+     {
+      "id": "tori_body",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-tori_body.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "tori_head",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-tori_head.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "tori_eyes_closed",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p2-tori_eyes_closed.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "blink",
+        "period": 3.6,
+        "dur": 0.18,
+        "phase": 0.12
+       }
+      ]
+     }
+    ]
+   },
+   "3": {
+    "base": "books/b0000001-5b00-4c00-8000-000000000001/page-03.png",
+    "layers": [
+     {
+      "id": "sky",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-sky.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "stars_a",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-stars_a.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.65,
+        "period": 3.4,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "stars_b",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-stars_b.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.7,
+        "period": 4.6,
+        "phase": 0.45
+       }
+      ]
+     },
+     {
+      "id": "moon",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-moon.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.005,
+        "period": 8
+       }
+      ]
+     },
+     {
+      "id": "platform",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-platform.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "carriage",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-carriage.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "lamp",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-lamp.png",
+      "px": 0.126,
+      "py": 0.23,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.18,
+        "period": 2.6
+       }
+      ]
+     },
+     {
+      "id": "owl_body",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-owl_body.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 3.2
+       }
+      ]
+     },
+     {
+      "id": "owl_wing",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-owl_wing.png",
+      "px": 0.7131,
+      "py": 0.6025,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 16,
+        "period": 2.4
+       },
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 3.2
+       }
+      ]
+     },
+     {
+      "id": "owl_hat",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-owl_hat.png",
+      "px": 0.6131,
+      "py": 0.5025,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 9,
+        "period": 4.4
+       },
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 3.2
+       }
+      ]
+     },
+     {
+      "id": "owl_eyes_closed",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-owl_eyes_closed.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "blink",
+        "period": 4.0,
+        "dur": 0.18,
+        "phase": 0.3
+       },
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 3.2
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_l",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-tori_ear_l.png",
+      "px": 0.27,
+      "py": 0.6688,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 6,
+        "period": 4.2,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_r",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-tori_ear_r.png",
+      "px": 0.3175,
+      "py": 0.6688,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 6,
+        "period": 4.55,
+        "phase": 0.35
+       }
+      ]
+     },
+     {
+      "id": "tori_body",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-tori_body.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "tori_head",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-tori_head.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "tori_eyes_closed",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p3-tori_eyes_closed.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "blink",
+        "period": 3.6,
+        "dur": 0.18,
+        "phase": 0.12
+       }
+      ]
+     }
+    ]
+   },
+   "4": {
+    "base": "books/b0000001-5b00-4c00-8000-000000000001/page-04.png",
+    "layers": [
+     {
+      "id": "sky",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-sky.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "stars_a",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-stars_a.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.65,
+        "period": 3.4,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "stars_b",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-stars_b.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.7,
+        "period": 4.6,
+        "phase": 0.45
+       }
+      ]
+     },
+     {
+      "id": "moon",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-moon.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 8
+       }
+      ]
+     },
+     {
+      "id": "clouds_far",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-clouds_far.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "drift",
+        "dx": -0.08
+       }
+      ]
+     },
+     {
+      "id": "star0",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-star0.png",
+      "px": 0.7,
+      "py": 0.25,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 11,
+        "period": 2.8,
+        "phase": 0.0
+       },
+       {
+        "kind": "bob",
+        "amp": 0.01,
+        "period": 3.6,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "star1",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-star1.png",
+      "px": 0.875,
+      "py": 0.4167,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 11,
+        "period": 2.8,
+        "phase": 0.4
+       },
+       {
+        "kind": "bob",
+        "amp": 0.01,
+        "period": 3.6,
+        "phase": 0.4
+       }
+      ]
+     },
+     {
+      "id": "star2",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-star2.png",
+      "px": 0.55,
+      "py": 0.15,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 11,
+        "period": 2.8,
+        "phase": 0.7
+       },
+       {
+        "kind": "bob",
+        "amp": 0.01,
+        "period": 3.6,
+        "phase": 0.7
+       }
+      ]
+     },
+     {
+      "id": "clouds_mid",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-clouds_mid.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "drift",
+        "dx": -0.14
+       }
+      ]
+     },
+     {
+      "id": "bridge",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-bridge.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "train",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-train.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 1.5
+       }
+      ]
+     },
+     {
+      "id": "wheel0",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-wheel0.png",
+      "px": 0.2462,
+      "py": 0.7852,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 1.5
+       },
+       {
+        "kind": "spin",
+        "period": 1.4
+       }
+      ]
+     },
+     {
+      "id": "wheel1",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-wheel1.png",
+      "px": 0.4006,
+      "py": 0.7852,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 1.5
+       },
+       {
+        "kind": "spin",
+        "period": 1.4
+       }
+      ]
+     },
+     {
+      "id": "wheel2",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-wheel2.png",
+      "px": 0.5194,
+      "py": 0.7852,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 1.5
+       },
+       {
+        "kind": "spin",
+        "period": 1.4
+       }
+      ]
+     },
+     {
+      "id": "wheel3",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-wheel3.png",
+      "px": 0.6381,
+      "py": 0.7852,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 1.5
+       },
+       {
+        "kind": "spin",
+        "period": 1.4
+       }
+      ]
+     },
+     {
+      "id": "smoke0",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-smoke0.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "drift",
+        "dx": -0.1
+       },
+       {
+        "kind": "rise",
+        "amp": 0.28,
+        "period": 3.4,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "smoke1",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-smoke1.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "drift",
+        "dx": -0.1
+       },
+       {
+        "kind": "rise",
+        "amp": 0.28,
+        "period": 3.4,
+        "phase": 0.34
+       }
+      ]
+     },
+     {
+      "id": "smoke2",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-smoke2.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "drift",
+        "dx": -0.1
+       },
+       {
+        "kind": "rise",
+        "amp": 0.28,
+        "period": 3.4,
+        "phase": 0.68
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_l",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-tori_ear_l.png",
+      "px": 0.401,
+      "py": 0.5147,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 9,
+        "period": 4.2,
+        "phase": 0.0
+       },
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 1.5
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_r",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-tori_ear_r.png",
+      "px": 0.424,
+      "py": 0.5147,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 9,
+        "period": 4.55,
+        "phase": 0.35
+       },
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 1.5
+       }
+      ]
+     },
+     {
+      "id": "tori_body",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-tori_body.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 1.5
+       }
+      ]
+     },
+     {
+      "id": "tori_head",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-tori_head.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 1.5
+       }
+      ]
+     },
+     {
+      "id": "tori_eyes_closed",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-tori_eyes_closed.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "blink",
+        "period": 3.6,
+        "dur": 0.18,
+        "phase": 0.12
+       },
+       {
+        "kind": "bob",
+        "amp": 0.004,
+        "period": 1.5
+       }
+      ]
+     },
+     {
+      "id": "clouds_near",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p4-clouds_near.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "drift",
+        "dx": -0.2
+       }
+      ]
+     }
+    ]
+   },
+   "5": {
+    "base": "books/b0000001-5b00-4c00-8000-000000000001/page-05.png",
+    "layers": [
+     {
+      "id": "sky",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-sky.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "stars_a",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-stars_a.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.65,
+        "period": 3.4,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "stars_b",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-stars_b.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.7,
+        "period": 4.6,
+        "phase": 0.45
+       }
+      ]
+     },
+     {
+      "id": "moon",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-moon.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.005,
+        "period": 8
+       }
+      ]
+     },
+     {
+      "id": "ground",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-ground.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "house0",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-house0.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "light0",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-light0.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "ramp",
+        "start": 0.12,
+        "end": 0.26,
+        "opFrom": 1,
+        "opTo": 0
+       }
+      ]
+     },
+     {
+      "id": "house1",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-house1.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "light1",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-light1.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "ramp",
+        "start": 0.28,
+        "end": 0.42000000000000004,
+        "opFrom": 1,
+        "opTo": 0
+       }
+      ]
+     },
+     {
+      "id": "house2",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-house2.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "light2",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-light2.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "ramp",
+        "start": 0.44,
+        "end": 0.5800000000000001,
+        "opFrom": 1,
+        "opTo": 0
+       }
+      ]
+     },
+     {
+      "id": "house3",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-house3.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "light3",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-light3.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "ramp",
+        "start": 0.6,
+        "end": 0.74,
+        "opFrom": 1,
+        "opTo": 0
+       }
+      ]
+     },
+     {
+      "id": "baby0",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-baby0.png",
+      "px": 0.155,
+      "py": 0.5583,
+      "motion": [
+       {
+        "kind": "breathe",
+        "amp": 0.07,
+        "period": 3.2,
+        "phase": 0.0
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 4,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "baby1",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-baby1.png",
+      "px": 0.3675,
+      "py": 0.5917,
+      "motion": [
+       {
+        "kind": "breathe",
+        "amp": 0.07,
+        "period": 3.2,
+        "phase": 0.25
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 4,
+        "phase": 0.3
+       }
+      ]
+     },
+     {
+      "id": "baby2",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-baby2.png",
+      "px": 0.63,
+      "py": 0.5508,
+      "motion": [
+       {
+        "kind": "breathe",
+        "amp": 0.07,
+        "period": 3.2,
+        "phase": 0.5
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 4,
+        "phase": 0.6
+       }
+      ]
+     },
+     {
+      "id": "baby3",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-baby3.png",
+      "px": 0.855,
+      "py": 0.5692,
+      "motion": [
+       {
+        "kind": "breathe",
+        "amp": 0.07,
+        "period": 3.2,
+        "phase": 0.75
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 4,
+        "phase": 0.8999999999999999
+       }
+      ]
+     },
+     {
+      "id": "dim",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-dim.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "ramp",
+        "start": 0.1,
+        "end": 0.95,
+        "opFrom": 0.0,
+        "opTo": 0.38
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_l",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-tori_ear_l.png",
+      "px": 0.4835,
+      "py": 0.8144,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 6,
+        "period": 4.2,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_r",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-tori_ear_r.png",
+      "px": 0.5165,
+      "py": 0.8144,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 6,
+        "period": 4.55,
+        "phase": 0.35
+       }
+      ]
+     },
+     {
+      "id": "tori_body",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-tori_body.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "tori_head",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-tori_head.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "tori_eyes_closed",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p5-tori_eyes_closed.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "blink",
+        "period": 3.6,
+        "dur": 0.18,
+        "phase": 0.12
+       }
+      ]
+     }
+    ]
+   },
+   "6": {
+    "base": "books/b0000001-5b00-4c00-8000-000000000001/page-06.png",
+    "layers": [
+     {
+      "id": "sky",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-sky.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "stars_a",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-stars_a.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.65,
+        "period": 3.4,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "stars_b",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-stars_b.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.7,
+        "period": 4.6,
+        "phase": 0.45
+       }
+      ]
+     },
+     {
+      "id": "moon",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-moon.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "breathe",
+        "amp": 0.012,
+        "period": 6
+       }
+      ]
+     },
+     {
+      "id": "hills_far",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-hills_far.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "drift",
+        "dx": -0.015
+       }
+      ]
+     },
+     {
+      "id": "ground",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-ground.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "tori_ear_l",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-tori_ear_l.png",
+      "px": 0.385,
+      "py": 0.624,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 3,
+        "period": 4.2,
+        "phase": 0.0
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 4.2
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_r",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-tori_ear_r.png",
+      "px": 0.44,
+      "py": 0.624,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 3,
+        "period": 4.55,
+        "phase": 0.35
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 4.2
+       }
+      ]
+     },
+     {
+      "id": "tori_body",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-tori_body.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 4.2
+       }
+      ]
+     },
+     {
+      "id": "tori_head",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-tori_head.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 4.2
+       }
+      ]
+     },
+     {
+      "id": "tori_eyes_closed",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-tori_eyes_closed.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 4.2
+       }
+      ]
+     },
+     {
+      "id": "baby",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-baby.png",
+      "px": 0.565,
+      "py": 0.7833,
+      "motion": [
+       {
+        "kind": "breathe",
+        "amp": 0.05,
+        "period": 3.4
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 4.2
+       }
+      ]
+     },
+     {
+      "id": "note0",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-note0.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "rise",
+        "amp": 0.25,
+        "period": 4.8,
+        "phase": 0.0
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 2.4,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "note1",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-note1.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "rise",
+        "amp": 0.25,
+        "period": 4.8,
+        "phase": 0.34
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 2.4,
+        "phase": 0.34
+       }
+      ]
+     },
+     {
+      "id": "note2",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p6-note2.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "rise",
+        "amp": 0.25,
+        "period": 4.8,
+        "phase": 0.68
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 2.4,
+        "phase": 0.68
+       }
+      ]
+     }
+    ]
+   },
+   "7": {
+    "base": "books/b0000001-5b00-4c00-8000-000000000001/page-07.png",
+    "layers": [
+     {
+      "id": "win_sky",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p7-win_sky.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "win_stars",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p7-win_stars.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "drift",
+        "dx": -0.22
+       }
+      ]
+     },
+     {
+      "id": "room",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p7-room.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 3.0
+       }
+      ]
+     },
+     {
+      "id": "win_frame",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p7-win_frame.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 3.0
+       }
+      ]
+     },
+     {
+      "id": "seat",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p7-seat.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 3.0
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_l",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p7-tori_ear_l.png",
+      "px": 0.675,
+      "py": 0.5533,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 3,
+        "period": 4.2,
+        "phase": 0.0
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 3.0
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_r",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p7-tori_ear_r.png",
+      "px": 0.725,
+      "py": 0.5533,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 3,
+        "period": 4.55,
+        "phase": 0.35
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 3.0
+       }
+      ]
+     },
+     {
+      "id": "tori_body",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p7-tori_body.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 3.0
+       }
+      ]
+     },
+     {
+      "id": "tori_head",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p7-tori_head.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 3.0
+       }
+      ]
+     },
+     {
+      "id": "tori_eyes_closed",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p7-tori_eyes_closed.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "ramp",
+        "start": 0.12,
+        "end": 0.85,
+        "opFrom": 0,
+        "opTo": 1
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 3.0
+       }
+      ]
+     },
+     {
+      "id": "zzz",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p7-zzz.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "ramp",
+        "start": 0.6,
+        "end": 0.9,
+        "opFrom": 0,
+        "opTo": 1
+       },
+       {
+        "kind": "rise",
+        "amp": 0.12,
+        "period": 4.5
+       }
+      ]
+     },
+     {
+      "id": "lamp",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p7-lamp.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.2,
+        "period": 3.0
+       },
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 3.0
+       }
+      ]
+     }
+    ]
+   },
+   "8": {
+    "base": "books/b0000001-5b00-4c00-8000-000000000001/page-08.png",
+    "layers": [
+     {
+      "id": "win_sky",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-win_sky.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "win_stars",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-win_stars.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "twinkle",
+        "amp": 0.7,
+        "period": 3.2
+       }
+      ]
+     },
+     {
+      "id": "moon",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-moon.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "bob",
+        "amp": 0.006,
+        "period": 7
+       },
+       {
+        "kind": "breathe",
+        "amp": 0.012,
+        "period": 5
+       }
+      ]
+     },
+     {
+      "id": "room",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-room.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "win_frame",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-win_frame.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "curtains",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-curtains.png",
+      "px": 0.75,
+      "py": 0.1267,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 1.4,
+        "period": 6
+       }
+      ]
+     },
+     {
+      "id": "bed",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-bed.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "tori_ear_l",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-tori_ear_l.png",
+      "px": 0.19,
+      "py": 0.5367,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 4,
+        "period": 4.2,
+        "phase": 0.0
+       }
+      ]
+     },
+     {
+      "id": "tori_ear_r",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-tori_ear_r.png",
+      "px": 0.24,
+      "py": 0.5367,
+      "motion": [
+       {
+        "kind": "sway",
+        "amp": 4,
+        "period": 4.55,
+        "phase": 0.35
+       }
+      ]
+     },
+     {
+      "id": "tori_head",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-tori_head.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "tori_eyes_closed",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-tori_eyes_closed.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": []
+     },
+     {
+      "id": "blanket",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-blanket.png",
+      "px": 0.4,
+      "py": 0.74,
+      "motion": [
+       {
+        "kind": "breathe",
+        "amp": 0.012,
+        "period": 4.2
+       }
+      ]
+     },
+     {
+      "id": "zzz",
+      "file": "books/b0000001-5b00-4c00-8000-000000000001/scene/p8-zzz.png",
+      "px": 0.5,
+      "py": 0.5,
+      "motion": [
+       {
+        "kind": "rise",
+        "amp": 0.14,
+        "period": 4.4
+       }
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

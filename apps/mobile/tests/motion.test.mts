@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { easings, motionFor, cameraAt, particlesAt, hashSeed, narrationMatchesText, seeded, MAX_PARTICLES, estimateDuration } from '../src/motion/engine.ts';
+import { easings, motionFor, cameraAt, particlesAt, hashSeed, narrationMatchesText, layerState, seeded, MAX_PARTICLES, estimateDuration } from '../src/motion/engine.ts';
 import { splitSentences, activeCueIndex, activeSentenceIndex } from '../src/motion/captions.ts';
 
 const BOOK = 'b0000001-5b00-4c00-8000-000000000001';
@@ -135,4 +135,40 @@ test('관리자 움직임 설정: 끄면 정지, 카메라·반짝이 고정, au
   assert.equal(particlesAt(motionFor(BOOK, 3, { enabled: true, camera: 'auto', particles: 'none' }), 4).length, 0);
   const still = motionFor(BOOK, 3, { enabled: true, camera: 'still', particles: 'auto' });
   assert.equal(cameraAt(still, 5, 20, false).scale, 1);
+});
+
+test('층 움직임: 둥실·살랑·깜빡임·슬라이드·점점 켜짐', () => {
+  const near = (a: number, b: number) => Math.abs(a - b) < 1e-9;
+  // bob: 주기의 1/4 지점에서 최대
+  assert.ok(near(layerState([{ kind: 'bob', amp: 0.02, period: 4 }], 1, 10).ty, 0.02));
+  assert.ok(near(layerState([{ kind: 'sway', amp: 5, period: 4 }], 1, 10).rotateDeg, 5));
+  // 깜빡임: 주기 시작 0.16초 동안만 보임
+  const blink = [{ kind: 'blink' as const, period: 4, dur: 0.2 }];
+  assert.equal(layerState(blink, 0.1, 10).opacity, 1);
+  assert.equal(layerState(blink, 1.0, 10).opacity, 0);
+  assert.equal(layerState(blink, 4.1, 10).opacity, 1);
+  // 슬라이드: 시작 전 from, 끝난 뒤 to, 가운데는 중간값
+  const sl = [{ kind: 'slide' as const, from: [-0.5, 0] as [number, number], to: [0, 0] as [number, number], start: 0, end: 0.5 }];
+  assert.equal(layerState(sl, 0, 10).tx, -0.5);
+  assert.ok(near(layerState(sl, 2.5, 10).tx, -0.25));
+  assert.equal(layerState(sl, 9, 10).tx, 0);
+  // ramp: 눈꺼풀이 점점 내려옴 (투명 → 불투명)
+  const ramp = [{ kind: 'ramp' as const, start: 0.2, end: 0.8, opFrom: 0, opTo: 1 }];
+  assert.equal(layerState(ramp, 1, 10).opacity, 0);
+  assert.ok(near(layerState(ramp, 5, 10).opacity, 0.5));
+  assert.equal(layerState(ramp, 9.5, 10).opacity, 1);
+  // rise: 한 바퀴 시작·끝은 투명, 가운데는 보이고 위로 올라감
+  const rise = [{ kind: 'rise' as const, amp: 0.2, period: 4 }];
+  assert.ok(near(layerState(rise, 0, 10).opacity, 0));
+  assert.ok(near(layerState(rise, 2, 10).opacity, 1) && near(layerState(rise, 2, 10).ty, -0.1));
+  // 같은 시각 → 같은 결과 (되감기), 여러 움직임은 겹침
+  const both = [{ kind: 'bob' as const, amp: 0.01, period: 3 }, { kind: 'sway' as const, amp: 2, period: 5 }];
+  assert.deepEqual(layerState(both, 1.7, 8), layerState(both, 1.7, 8));
+  // 바퀴: end 이후에는 멈춤
+  const spin = [{ kind: 'spin' as const, period: 2, end: 0.5 }];
+  assert.ok(near(layerState(spin, 1, 10).rotateDeg, 180));
+  assert.equal(layerState(spin, 5, 10).rotateDeg, layerState(spin, 9, 10).rotateDeg);
+  // 모션 줄이기: 가만히, 깜빡임·올라감 층은 숨김
+  const r = layerState([...both, ...blink, ...rise], 2, 8, true);
+  assert.ok(r.tx === 0 && r.ty === 0 && r.rotateDeg === 0 && r.scale === 1 && r.opacity === 0);
 });

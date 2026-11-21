@@ -122,6 +122,8 @@ export function useStoryPlayer(opts: { page: PlayerPage | null; hasNext: boolean
       let cur: number;
       if (L.audio) {
         cur = player.currentTime;
+        // 끝났다는 알림이 안 와도(기기에 따라) 음성 길이를 지나면 한 쪽이 끝난 것으로 본다
+        if (cur >= L.duration + 1.2) onPageDone();
       } else {
         vt.current += dt * L.speed;
         cur = vt.current;

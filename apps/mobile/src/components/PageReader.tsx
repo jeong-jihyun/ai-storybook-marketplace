@@ -7,6 +7,7 @@ import { narrationFor, useNarrationManifest } from '../motion/narration';
 import { useReaderPrefs } from '../motion/prefs';
 import { useStoryPlayer } from '../motion/useStoryPlayer';
 import { colors, MIN_TOUCH, radius, space, type as t } from '../theme';
+import { Button } from './Button';
 import { NarratedText } from './NarratedText';
 import { nextSpeed, PlayerBar } from './PlayerBar';
 import { StoryArt } from './StoryArt';
@@ -134,6 +135,25 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard, moti
             )}
           />
         ) : null}
+        {player.finished && index === pages.length - 1 ? (
+          <View style={styles.doneWrap} pointerEvents="box-none">
+            <View style={styles.doneCard} accessibilityRole="alert" accessibilityLiveRegion="polite">
+              <Text style={t.title}>이야기가 끝났어요 🌙</Text>
+              <Text style={[t.body, { textAlign: 'center' }]}>마지막 쪽까지 다 읽었어요.{'\n'}그림이 멈춘 건 이야기가 끝나서예요.</Text>
+              <View style={styles.doneBtns}>
+                <Button
+                  label="처음부터 다시"
+                  variant="secondary"
+                  onPress={() => {
+                    go(0);
+                    setTimeout(() => player.play(), 700);
+                  }}
+                />
+                <Button label="마치기" onPress={() => go(items.length - 1)} />
+              </View>
+            </View>
+          </View>
+        ) : null}
       </View>
 
       <View style={side ? styles.bottomRow : undefined}>
@@ -185,6 +205,9 @@ const styles = StyleSheet.create({
   art: { width: '100%', borderRadius: radius.lg, backgroundColor: colors.surfaceWarm },
   bottomRow: { flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.surface },
   navSide: { borderTopWidth: 0, paddingVertical: 4, gap: space.md },
+  doneWrap: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', padding: space.xl, backgroundColor: 'rgba(20,24,50,0.45)' },
+  doneCard: { width: '100%', maxWidth: 420, backgroundColor: colors.surface, borderRadius: radius.lg, padding: space.xl, gap: space.md, alignItems: 'center' },
+  doneBtns: { alignSelf: 'stretch', gap: space.sm },
   end: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: space.xxl, gap: space.md },
   nav: {
     flexDirection: 'row',

@@ -33,12 +33,14 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 7
+        "period": 7,
+        "delay": 0.45
        },
        {
         "kind": "breathe",
         "amp": 0.012,
-        "period": 5
+        "period": 5,
+        "delay": 0.45
        }
       ]
      },
@@ -65,7 +67,8 @@
        {
         "kind": "sway",
         "amp": 1.4,
-        "period": 6
+        "period": 6,
+        "delay": 0.9
        }
       ]
      },
@@ -85,8 +88,11 @@
        {
         "kind": "sway",
         "amp": 4,
-        "period": 4.2,
-        "phase": 0.0
+        "period": 1.6,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.0,
+        "delay": 1.35
        }
       ]
      },
@@ -99,8 +105,11 @@
        {
         "kind": "sway",
         "amp": 4,
-        "period": 4.55,
-        "phase": 0.35
+        "period": 1.9500000000000002,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.35,
+        "delay": 1.35
        }
       ]
      },
@@ -134,7 +143,8 @@
        {
         "kind": "breathe",
         "amp": 0.012,
-        "period": 4.2
+        "period": 4.2,
+        "delay": 1.8
        }
       ]
      },
@@ -148,7 +158,8 @@
         "kind": "rise",
         "amp": 0.14,
         "period": 4.0,
-        "phase": 0.0
+        "phase": 0.0,
+        "delay": 2.25
        }
       ]
      },
@@ -162,7 +173,8 @@
         "kind": "rise",
         "amp": 0.14,
         "period": 4.0,
-        "phase": 0.5
+        "phase": 0.5,
+        "delay": 2.25
        }
       ]
      }
@@ -215,7 +227,8 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 8
+        "period": 8,
+        "delay": 0.45
        }
       ]
      },
@@ -254,7 +267,8 @@
        {
         "kind": "twinkle",
         "amp": 0.25,
-        "period": 3.8
+        "period": 3.8,
+        "delay": 0.9
        }
       ]
      },
@@ -276,6 +290,12 @@
         ],
         "start": 0.0,
         "end": 0.55
+       },
+       {
+        "kind": "bob",
+        "amp": 0.003,
+        "period": 1.7,
+        "delay": 4.5
        }
       ]
      },
@@ -297,6 +317,12 @@
         ],
         "start": 0.0,
         "end": 0.55
+       },
+       {
+        "kind": "bob",
+        "amp": 0.003,
+        "period": 1.7,
+        "delay": 4.5
        },
        {
         "kind": "spin",
@@ -325,6 +351,12 @@
         "end": 0.55
        },
        {
+        "kind": "bob",
+        "amp": 0.003,
+        "period": 1.7,
+        "delay": 4.5
+       },
+       {
         "kind": "spin",
         "period": 1.3,
         "end": 0.55
@@ -349,6 +381,12 @@
         ],
         "start": 0.0,
         "end": 0.55
+       },
+       {
+        "kind": "bob",
+        "amp": 0.003,
+        "period": 1.7,
+        "delay": 4.5
        },
        {
         "kind": "spin",
@@ -377,6 +415,12 @@
         "end": 0.55
        },
        {
+        "kind": "bob",
+        "amp": 0.003,
+        "period": 1.7,
+        "delay": 4.5
+       },
+       {
         "kind": "spin",
         "period": 1.3,
         "end": 0.55
@@ -403,10 +447,17 @@
         "end": 0.55
        },
        {
+        "kind": "bob",
+        "amp": 0.003,
+        "period": 1.7,
+        "delay": 4.5
+       },
+       {
         "kind": "rise",
         "amp": 0.28,
         "period": 3.3,
-        "phase": 0.0
+        "phase": 0.0,
+        "delay": 1.35
        }
       ]
      },
@@ -430,10 +481,17 @@
         "end": 0.55
        },
        {
+        "kind": "bob",
+        "amp": 0.003,
+        "period": 1.7,
+        "delay": 4.5
+       },
+       {
         "kind": "rise",
         "amp": 0.28,
         "period": 3.3,
-        "phase": 0.34
+        "phase": 0.34,
+        "delay": 1.35
        }
       ]
      },
@@ -457,10 +515,17 @@
         "end": 0.55
        },
        {
+        "kind": "bob",
+        "amp": 0.003,
+        "period": 1.7,
+        "delay": 4.5
+       },
+       {
         "kind": "rise",
         "amp": 0.28,
         "period": 3.3,
-        "phase": 0.68
+        "phase": 0.68,
+        "delay": 1.35
        }
       ]
      },
@@ -473,8 +538,11 @@
        {
         "kind": "sway",
         "amp": 5,
-        "period": 4.2,
-        "phase": 0.0
+        "period": 1.6,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.0,
+        "delay": 1.8
        }
       ]
      },
@@ -487,8 +555,11 @@
        {
         "kind": "sway",
         "amp": 5,
-        "period": 4.55,
-        "phase": 0.35
+        "period": 1.9500000000000002,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.35,
+        "delay": 1.8
        }
       ]
      },
@@ -569,7 +640,8 @@
        {
         "kind": "bob",
         "amp": 0.005,
-        "period": 8
+        "period": 8,
+        "delay": 0.45
        }
       ]
      },
@@ -596,7 +668,8 @@
        {
         "kind": "twinkle",
         "amp": 0.18,
-        "period": 2.6
+        "period": 2.6,
+        "delay": 0.9
        }
       ]
      },
@@ -609,7 +682,8 @@
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 3.2
+        "period": 3.2,
+        "delay": 1.35
        }
       ]
      },
@@ -622,12 +696,16 @@
        {
         "kind": "sway",
         "amp": 16,
-        "period": 2.4
+        "period": 0.9,
+        "burst": 2.4,
+        "gap": 2.6,
+        "delay": 1.35
        },
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 3.2
+        "period": 3.2,
+        "delay": 1.35
        }
       ]
      },
@@ -640,12 +718,17 @@
        {
         "kind": "sway",
         "amp": 9,
-        "period": 4.4
+        "period": 1.4,
+        "burst": 2.8,
+        "gap": 2.4,
+        "phase": 0.3,
+        "delay": 1.35
        },
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 3.2
+        "period": 3.2,
+        "delay": 1.35
        }
       ]
      },
@@ -664,7 +747,8 @@
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 3.2
+        "period": 3.2,
+        "delay": 1.35
        }
       ]
      },
@@ -677,8 +761,11 @@
        {
         "kind": "sway",
         "amp": 6,
-        "period": 4.2,
-        "phase": 0.0
+        "period": 1.6,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.0,
+        "delay": 1.8
        }
       ]
      },
@@ -691,8 +778,11 @@
        {
         "kind": "sway",
         "amp": 6,
-        "period": 4.55,
-        "phase": 0.35
+        "period": 1.9500000000000002,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.35,
+        "delay": 1.8
        }
       ]
      },
@@ -773,7 +863,8 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 8
+        "period": 8,
+        "delay": 0.45
        }
       ]
      },
@@ -798,14 +889,18 @@
        {
         "kind": "sway",
         "amp": 11,
-        "period": 2.8,
-        "phase": 0.0
+        "period": 1.5,
+        "burst": 3.0,
+        "gap": 1.6,
+        "phase": 0.0,
+        "delay": 0.9
        },
        {
         "kind": "bob",
         "amp": 0.01,
         "period": 3.6,
-        "phase": 0.0
+        "phase": 0.0,
+        "delay": 0.9
        }
       ]
      },
@@ -818,14 +913,18 @@
        {
         "kind": "sway",
         "amp": 11,
-        "period": 2.8,
-        "phase": 0.4
+        "period": 1.5,
+        "burst": 3.0,
+        "gap": 1.6,
+        "phase": 0.4,
+        "delay": 0.9
        },
        {
         "kind": "bob",
         "amp": 0.01,
         "period": 3.6,
-        "phase": 0.4
+        "phase": 0.4,
+        "delay": 0.9
        }
       ]
      },
@@ -838,14 +937,18 @@
        {
         "kind": "sway",
         "amp": 11,
-        "period": 2.8,
-        "phase": 0.7
+        "period": 1.5,
+        "burst": 3.0,
+        "gap": 1.6,
+        "phase": 0.7,
+        "delay": 0.9
        },
        {
         "kind": "bob",
         "amp": 0.01,
         "period": 3.6,
-        "phase": 0.7
+        "phase": 0.7,
+        "delay": 0.9
        }
       ]
      },
@@ -877,7 +980,8 @@
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 1.5
+        "period": 1.5,
+        "delay": 1.35
        }
       ]
      },
@@ -890,7 +994,8 @@
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 1.5
+        "period": 1.5,
+        "delay": 1.35
        },
        {
         "kind": "spin",
@@ -907,7 +1012,8 @@
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 1.5
+        "period": 1.5,
+        "delay": 1.35
        },
        {
         "kind": "spin",
@@ -924,7 +1030,8 @@
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 1.5
+        "period": 1.5,
+        "delay": 1.35
        },
        {
         "kind": "spin",
@@ -941,7 +1048,8 @@
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 1.5
+        "period": 1.5,
+        "delay": 1.35
        },
        {
         "kind": "spin",
@@ -963,7 +1071,8 @@
         "kind": "rise",
         "amp": 0.28,
         "period": 3.4,
-        "phase": 0.0
+        "phase": 0.0,
+        "delay": 1.35
        }
       ]
      },
@@ -981,7 +1090,8 @@
         "kind": "rise",
         "amp": 0.28,
         "period": 3.4,
-        "phase": 0.34
+        "phase": 0.34,
+        "delay": 1.35
        }
       ]
      },
@@ -999,7 +1109,8 @@
         "kind": "rise",
         "amp": 0.28,
         "period": 3.4,
-        "phase": 0.68
+        "phase": 0.68,
+        "delay": 1.35
        }
       ]
      },
@@ -1012,13 +1123,17 @@
        {
         "kind": "sway",
         "amp": 9,
-        "period": 4.2,
-        "phase": 0.0
+        "period": 1.6,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.0,
+        "delay": 1.8
        },
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 1.5
+        "period": 1.5,
+        "delay": 1.35
        }
       ]
      },
@@ -1031,13 +1146,17 @@
        {
         "kind": "sway",
         "amp": 9,
-        "period": 4.55,
-        "phase": 0.35
+        "period": 1.9500000000000002,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.35,
+        "delay": 1.8
        },
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 1.5
+        "period": 1.5,
+        "delay": 1.35
        }
       ]
      },
@@ -1050,7 +1169,8 @@
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 1.5
+        "period": 1.5,
+        "delay": 1.8
        }
       ]
      },
@@ -1063,7 +1183,8 @@
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 1.5
+        "period": 1.5,
+        "delay": 1.8
        }
       ]
      },
@@ -1082,7 +1203,8 @@
        {
         "kind": "bob",
         "amp": 0.004,
-        "period": 1.5
+        "period": 1.5,
+        "delay": 1.8
        }
       ]
      },
@@ -1147,7 +1269,8 @@
        {
         "kind": "bob",
         "amp": 0.005,
-        "period": 8
+        "period": 8,
+        "delay": 0.45
        }
       ]
      },
@@ -1256,13 +1379,15 @@
         "kind": "breathe",
         "amp": 0.07,
         "period": 3.2,
-        "phase": 0.0
+        "phase": 0.0,
+        "delay": 0.9
        },
        {
         "kind": "bob",
         "amp": 0.006,
         "period": 4,
-        "phase": 0.0
+        "phase": 0.0,
+        "delay": 0.9
        }
       ]
      },
@@ -1276,13 +1401,15 @@
         "kind": "breathe",
         "amp": 0.07,
         "period": 3.2,
-        "phase": 0.25
+        "phase": 0.25,
+        "delay": 0.9
        },
        {
         "kind": "bob",
         "amp": 0.006,
         "period": 4,
-        "phase": 0.3
+        "phase": 0.3,
+        "delay": 0.9
        }
       ]
      },
@@ -1296,13 +1423,15 @@
         "kind": "breathe",
         "amp": 0.07,
         "period": 3.2,
-        "phase": 0.5
+        "phase": 0.5,
+        "delay": 0.9
        },
        {
         "kind": "bob",
         "amp": 0.006,
         "period": 4,
-        "phase": 0.6
+        "phase": 0.6,
+        "delay": 0.9
        }
       ]
      },
@@ -1316,13 +1445,15 @@
         "kind": "breathe",
         "amp": 0.07,
         "period": 3.2,
-        "phase": 0.75
+        "phase": 0.75,
+        "delay": 0.9
        },
        {
         "kind": "bob",
         "amp": 0.006,
         "period": 4,
-        "phase": 0.8999999999999999
+        "phase": 0.8999999999999999,
+        "delay": 0.9
        }
       ]
      },
@@ -1350,8 +1481,11 @@
        {
         "kind": "sway",
         "amp": 6,
-        "period": 4.2,
-        "phase": 0.0
+        "period": 1.6,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.0,
+        "delay": 1.35
        }
       ]
      },
@@ -1364,8 +1498,11 @@
        {
         "kind": "sway",
         "amp": 6,
-        "period": 4.55,
-        "phase": 0.35
+        "period": 1.9500000000000002,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.35,
+        "delay": 1.35
        }
       ]
      },
@@ -1446,7 +1583,8 @@
        {
         "kind": "breathe",
         "amp": 0.012,
-        "period": 6
+        "period": 6,
+        "delay": 0.45
        }
       ]
      },
@@ -1478,13 +1616,17 @@
        {
         "kind": "sway",
         "amp": 3,
-        "period": 4.2,
-        "phase": 0.0
+        "period": 1.6,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.0,
+        "delay": 0.9
        },
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 4.2
+        "period": 4.2,
+        "delay": 0.9
        }
       ]
      },
@@ -1497,13 +1639,17 @@
        {
         "kind": "sway",
         "amp": 3,
-        "period": 4.55,
-        "phase": 0.35
+        "period": 1.9500000000000002,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.35,
+        "delay": 0.9
        },
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 4.2
+        "period": 4.2,
+        "delay": 0.9
        }
       ]
      },
@@ -1516,7 +1662,8 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 4.2
+        "period": 4.2,
+        "delay": 0.9
        }
       ]
      },
@@ -1529,7 +1676,8 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 4.2
+        "period": 4.2,
+        "delay": 0.9
        }
       ]
      },
@@ -1542,7 +1690,8 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 4.2
+        "period": 4.2,
+        "delay": 0.9
        }
       ]
      },
@@ -1555,12 +1704,14 @@
        {
         "kind": "breathe",
         "amp": 0.05,
-        "period": 3.4
+        "period": 3.4,
+        "delay": 1.35
        },
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 4.2
+        "period": 4.2,
+        "delay": 0.9
        }
       ]
      },
@@ -1574,13 +1725,15 @@
         "kind": "rise",
         "amp": 0.25,
         "period": 4.8,
-        "phase": 0.0
+        "phase": 0.0,
+        "delay": 1.8
        },
        {
         "kind": "bob",
         "amp": 0.006,
         "period": 2.4,
-        "phase": 0.0
+        "phase": 0.0,
+        "delay": 1.8
        }
       ]
      },
@@ -1594,13 +1747,15 @@
         "kind": "rise",
         "amp": 0.25,
         "period": 4.8,
-        "phase": 0.34
+        "phase": 0.34,
+        "delay": 1.8
        },
        {
         "kind": "bob",
         "amp": 0.006,
         "period": 2.4,
-        "phase": 0.34
+        "phase": 0.34,
+        "delay": 1.8
        }
       ]
      },
@@ -1614,13 +1769,15 @@
         "kind": "rise",
         "amp": 0.25,
         "period": 4.8,
-        "phase": 0.68
+        "phase": 0.68,
+        "delay": 1.8
        },
        {
         "kind": "bob",
         "amp": 0.006,
         "period": 2.4,
-        "phase": 0.68
+        "phase": 0.68,
+        "delay": 1.8
        }
       ]
      }
@@ -1657,7 +1814,8 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 3.0
+        "period": 3.0,
+        "delay": 0.45
        }
       ]
      },
@@ -1670,7 +1828,8 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 3.0
+        "period": 3.0,
+        "delay": 0.45
        }
       ]
      },
@@ -1683,7 +1842,8 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 3.0
+        "period": 3.0,
+        "delay": 0.45
        }
       ]
      },
@@ -1696,13 +1856,17 @@
        {
         "kind": "sway",
         "amp": 3,
-        "period": 4.2,
-        "phase": 0.0
+        "period": 1.6,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.0,
+        "delay": 1.35
        },
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 3.0
+        "period": 3.0,
+        "delay": 0.45
        }
       ]
      },
@@ -1715,13 +1879,17 @@
        {
         "kind": "sway",
         "amp": 3,
-        "period": 4.55,
-        "phase": 0.35
+        "period": 1.9500000000000002,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.35,
+        "delay": 1.35
        },
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 3.0
+        "period": 3.0,
+        "delay": 0.45
        }
       ]
      },
@@ -1734,7 +1902,8 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 3.0
+        "period": 3.0,
+        "delay": 1.35
        }
       ]
      },
@@ -1747,7 +1916,8 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 3.0
+        "period": 3.0,
+        "delay": 1.35
        }
       ]
      },
@@ -1767,7 +1937,8 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 3.0
+        "period": 3.0,
+        "delay": 1.35
        }
       ]
      },
@@ -1787,7 +1958,8 @@
        {
         "kind": "rise",
         "amp": 0.12,
-        "period": 4.5
+        "period": 4.5,
+        "delay": 1.8
        }
       ]
      },
@@ -1800,12 +1972,14 @@
        {
         "kind": "twinkle",
         "amp": 0.2,
-        "period": 3.0
+        "period": 3.0,
+        "delay": 2.25
        },
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 3.0
+        "period": 3.0,
+        "delay": 0.45
        }
       ]
      }
@@ -1843,12 +2017,14 @@
        {
         "kind": "bob",
         "amp": 0.006,
-        "period": 7
+        "period": 7,
+        "delay": 0.45
        },
        {
         "kind": "breathe",
         "amp": 0.012,
-        "period": 5
+        "period": 5,
+        "delay": 0.45
        }
       ]
      },
@@ -1875,7 +2051,8 @@
        {
         "kind": "sway",
         "amp": 1.4,
-        "period": 6
+        "period": 6,
+        "delay": 0.9
        }
       ]
      },
@@ -1895,8 +2072,11 @@
        {
         "kind": "sway",
         "amp": 4,
-        "period": 4.2,
-        "phase": 0.0
+        "period": 1.6,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.0,
+        "delay": 1.35
        }
       ]
      },
@@ -1909,8 +2089,11 @@
        {
         "kind": "sway",
         "amp": 4,
-        "period": 4.55,
-        "phase": 0.35
+        "period": 1.9500000000000002,
+        "burst": 2.4,
+        "gap": 2.2,
+        "phase": 0.35,
+        "delay": 1.35
        }
       ]
      },
@@ -1937,7 +2120,8 @@
        {
         "kind": "breathe",
         "amp": 0.012,
-        "period": 4.2
+        "period": 4.2,
+        "delay": 1.8
        }
       ]
      },
@@ -1950,7 +2134,8 @@
        {
         "kind": "rise",
         "amp": 0.14,
-        "period": 4.4
+        "period": 4.4,
+        "delay": 2.25
        }
       ]
      }

@@ -74,11 +74,12 @@ def p2():
     sc.add("house_light", light, [{"kind": "twinkle", "amp": 0.25, "period": 3.8}], defs=HOUSE_DEFS)
     body, wheels, chim = train(150, 478, 0.9)
     slide = {"kind": "slide", "from": [-0.62, 0], "to": [0, 0], "start": 0.0, "end": 0.55}
-    sc.add("train", body, [slide], defs=TRAIN_DEFS)
+    idle = {"kind": "bob", "amp": 0.003, "period": 1.7, "delay": 4.5}
+    sc.add("train", body, [slide, idle], defs=TRAIN_DEFS)
     for i, (w, (cx, cy)) in enumerate(wheels):
-        sc.add(f"wheel{i}", w, [slide, {"kind": "spin", "period": 1.3, "end": 0.55}], cx, cy)
+        sc.add(f"wheel{i}", w, [slide, idle, {"kind": "spin", "period": 1.3, "end": 0.55}], cx, cy)
     for i, ph in enumerate((0.0, 0.34, 0.68)):
-        sc.add(f"smoke{i}", smoke(chim[0], chim[1] - 6, 13 + i * 2), [slide, {"kind": "rise", "amp": 0.28, "period": 3.3, "phase": ph}])
+        sc.add(f"smoke{i}", smoke(chim[0], chim[1] - 6, 13 + i * 2), [slide, idle, {"kind": "rise", "amp": 0.28, "period": 3.3, "phase": ph}])
     Tori(595, 478, 0.62, flip=True).add(sc, "tori", ear_amp=5)
     return sc
 
@@ -99,9 +100,9 @@ def p3():
     o = Owl(528, 474, 1.25)
     sc.add("owl_body", o.body(), [{"kind": "bob", "amp": 0.004, "period": 3.2}])
     px, py = o.world(34, -90)
-    sc.add("owl_wing", o.wing(), [{"kind": "sway", "amp": 16, "period": 2.4}, {"kind": "bob", "amp": 0.004, "period": 3.2}], px, py)
+    sc.add("owl_wing", o.wing(), [{"kind": "sway", "amp": 16, "period": 0.9, "burst": 2.4, "gap": 2.6}, {"kind": "bob", "amp": 0.004, "period": 3.2}], px, py)
     hx, hy = o.world(-30, -138)
-    sc.add("owl_hat", o.hat(), [{"kind": "sway", "amp": 9, "period": 4.4}, {"kind": "bob", "amp": 0.004, "period": 3.2}], hx, hy)
+    sc.add("owl_hat", o.hat(), [{"kind": "sway", "amp": 9, "period": 1.4, "burst": 2.8, "gap": 2.4, "phase": 0.3}, {"kind": "bob", "amp": 0.004, "period": 3.2}], hx, hy)
     sc.add("owl_eyes_closed", o.eyes_closed(), [{"kind": "blink", "period": 4.0, "dur": 0.18, "phase": 0.3}, {"kind": "bob", "amp": 0.004, "period": 3.2}])
     Tori(235, 540, 0.95).add(sc, "tori", ear_amp=6)
     return sc
@@ -114,7 +115,7 @@ def p4():
     sc.add("clouds_far", cloud(160, 300, 1.1, "#8c97d6", .7) + cloud(500, 270, 1.3, "#8c97d6", .7) + cloud(690, 340, 0.9, "#8c97d6", .7), [{"kind": "drift", "dx": -0.08}])
     for i, (cx, cy, R, ph) in enumerate(((560, 150, 28, 0.0), (700, 250, 24, 0.4), (440, 90, 20, 0.7))):
         arms = f'<path d="M{cx-R*0.7} {cy+R*0.2} q{-R*0.9} {-R*0.6} {-R*0.6} {-R*1.3} M{cx+R*0.7} {cy+R*0.2} q{R*0.9} {-R*0.6} {R*0.6} {-R*1.3}" stroke="#d9a925" stroke-width="4" fill="none" stroke-linecap="round"/>'
-        sc.add(f"star{i}", arms + baby_star(cx, cy, R), [{"kind": "sway", "amp": 11, "period": 2.8, "phase": ph}, {"kind": "bob", "amp": 0.01, "period": 3.6, "phase": ph}], cx / W, cy / H, defs=STAR_GLOW)
+        sc.add(f"star{i}", arms + baby_star(cx, cy, R), [{"kind": "sway", "amp": 11, "period": 1.5, "burst": 3.0, "gap": 1.6, "phase": ph}, {"kind": "bob", "amp": 0.01, "period": 3.6, "phase": ph}], cx / W, cy / H, defs=STAR_GLOW)
     sc.add("clouds_mid", cloud(120, 430, 1.4, "#c3cdf5", .9) + cloud(450, 410, 1.2, "#c3cdf5", .9) + cloud(680, 440, 1.2, "#c3cdf5", .9), [{"kind": "drift", "dx": -0.14}])
     arches = "".join(cloud(x, 505, 1.15, "#e6ebff", .97) for x in range(0, 900, 95))
     sc.add("bridge", f'<rect x="0" y="488" width="{W}" height="12" fill="#dfe6ff"/>' + arches + f'<rect x="0" y="520" width="{W}" height="80" fill="#cfd8ff"/>')
@@ -197,6 +198,29 @@ def p8():
 SCENES = {1: p1, 2: p2, 3: p3, 4: p4, 5: p5, 6: p6, 7: p7, 8: p8}
 
 
+AMBIENT = ("bob", "sway", "breathe", "twinkle", "rise")
+GROUP = {"wheel": "train", "smoke": "train", "owl": "owl", "tori": "tori"}
+
+
+def stagger(sc, step=0.45, cap=3.2):
+    """층 묶음(캐릭터·기차·구름 …)이 한꺼번에가 아니라 차례로 깨어나게 시작 시간을 둔다.
+    같은 묶음의 층은 같은 시간에 시작해야 몸이 따로 놀지 않는다."""
+    import re
+    order = {}
+    for L in sc.layers:
+        k = re.sub(r"\d+$", "", L["id"].split("_")[0])
+        k = GROUP.get(k, k)
+        if any(m["kind"] in AMBIENT and "delay" not in m for m in L["motion"]):
+            order.setdefault(k, len(order))
+        L["_k"] = k
+    for L in sc.layers:
+        d = round(min(cap, order.get(L["_k"], 0) * step), 2)
+        for m in L["motion"]:
+            if m["kind"] in AMBIENT and "delay" not in m and d > 0:
+                m["delay"] = d
+        del L["_k"]
+
+
 def main():
     pages = {}
     only = [int(a) for a in sys.argv[1:]] or list(SCENES)
@@ -204,6 +228,7 @@ def main():
         pages = json.load(open(SCENES_JSON, encoding="utf-8")).get(BOOK, {}).get("pages", {})
     for n in only:
         sc = SCENES[n]()
+        stagger(sc)
         layers = render_scene(sc, BOOK, n, STORAGE)
         pages[str(n)] = {"base": f"books/{BOOK}/page-{n:02d}.png", "layers": layers}
         print(f"{n}쪽: 층 {len(layers)}개")

@@ -57,6 +57,11 @@ export type LayerMotionKind = 'drift' | 'slide' | 'bob' | 'sway' | 'breathe' | '
  */
 export interface LayerMotion {
   kind: LayerMotionKind;
+  /** 이 초(秒) 뒤에 움직이기 시작 */
+  delay?: number;
+  /** bob/sway/breathe: 움직이는 초 / 쉬는 초 (쉬는 동안 가만히) */
+  burst?: number;
+  gap?: number;
   /** bob/rise: 높이 비율 · sway/spin 제외: 각도(도) · breathe: 크기 변화 비율 · twinkle: 깜빡임 깊이 0~1 */
   amp?: number;
   period?: number;

@@ -168,6 +168,13 @@ test('층 움직임: 둥실·살랑·깜빡임·슬라이드·점점 켜짐', ()
   const spin = [{ kind: 'spin' as const, period: 2, end: 0.5 }];
   assert.ok(near(layerState(spin, 1, 10).rotateDeg, 180));
   assert.equal(layerState(spin, 5, 10).rotateDeg, layerState(spin, 9, 10).rotateDeg);
+  // 시작 지연 + 움직임/쉼 되풀이
+  const delayed = [{ kind: 'sway' as const, amp: 10, period: 2, delay: 3 }];
+  assert.equal(layerState(delayed, 2.9, 10).rotateDeg, 0);
+  assert.ok(Math.abs(layerState(delayed, 4.5, 10).rotateDeg) > 5);
+  const burst = [{ kind: 'sway' as const, amp: 10, period: 1, burst: 2, gap: 2 }];
+  assert.equal(layerState(burst, 3, 10).rotateDeg, 0); // 쉬는 구간
+  assert.ok(Math.abs(layerState(burst, 1.25, 10).rotateDeg) > 1); // 움직이는 구간
   // 모션 줄이기: 가만히, 깜빡임·올라감 층은 숨김
   const r = layerState([...both, ...blink, ...rise], 2, 8, true);
   assert.ok(r.tx === 0 && r.ty === 0 && r.rotateDeg === 0 && r.scale === 1 && r.opacity === 0);

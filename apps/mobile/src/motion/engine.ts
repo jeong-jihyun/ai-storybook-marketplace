@@ -203,6 +203,11 @@ export function estimateDuration(text: string): number {
 export type LayerMotionKind = 'drift' | 'slide' | 'bob' | 'sway' | 'breathe' | 'blink' | 'twinkle' | 'rise' | 'spin' | 'ramp';
 export interface LayerMotionSpec {
   kind: LayerMotionKind;
+  /** 이 초(秒) 뒤에 움직이기 시작 (여러 층이 차례로 깨어나도록 간격을 둠) */
+  delay?: number;
+  /** bob/sway/breathe: 몇 초 움직이고(burst) 몇 초 쉴지(gap) — 쉬는 동안은 가만히 */
+  burst?: number;
+  gap?: number;
   amp?: number;
   period?: number;
   phase?: number;
@@ -233,6 +238,25 @@ const frac = (x: number) => x - Math.floor(x);
  * 층 하나의 모양을 계산한다. 여러 움직임은 겹쳐서(이동·각도는 더하고, 크기·투명도는 곱해서) 적용.
  * t: 재생 위치(초), D: 이 쪽의 길이(초). reduced(모션 줄이기)면 가만히 두고 blink·rise 층은 숨긴다.
  */
+/** 움직임의 세기(0~1): 시작 지연 뒤 부드럽게 켜지고, burst/gap 이 있으면 움직임-쉼을 되풀이 */
+export function motionEnvelope(m: LayerMotionSpec, t: number): number {
+  const delay = m.delay ?? 0;
+  const t0 = t - delay;
+  if (t0 < 0) return 0;
+  let env = delay > 0 ? smooth01(t0 / 1.2) : 1; // 지연이 있을 때만 부드럽게 켜짐
+  if (m.burst && m.gap && (m.kind === 'bob' || m.kind === 'sway' || m.kind === 'breathe')) {
+    const cyc = m.burst + m.gap;
+    const u = (t0 + (m.phase ?? 0) * cyc) % cyc;
+    env *= u < m.burst ? Math.sin((Math.PI * u) / m.burst) : 0;
+  }
+  return env;
+}
+
+function smooth01(x: number): number {
+  const c = clamp01(x);
+  return c * c * (3 - 2 * c);
+}
+
 export function layerState(motions: LayerMotionSpec[], t: number, D: number, reduced = false): LayerState {
   const st: LayerState = { tx: 0, ty: 0, rotateDeg: 0, scale: 1, opacity: 1 };
   const dur = Math.max(1, D);
@@ -240,18 +264,22 @@ export function layerState(motions: LayerMotionSpec[], t: number, D: number, red
   for (const m of motions) {
     const period = Math.max(0.2, m.period ?? 6);
     const phase = m.phase ?? 0;
-    const amp = m.amp ?? 0;
+    const amp = (m.amp ?? 0) * motionEnvelope(m, t);
     switch (m.kind) {
       case 'blink':
         if (reduced) st.opacity *= 0;
-        else st.opacity *= frac(t / period + phase) * period < (m.dur ?? 0.16) ? 1 : 0;
+        else st.opacity *= t >= (m.delay ?? 0) && frac(t / period + phase) * period < (m.dur ?? 0.16) ? 1 : 0;
         break;
       case 'rise': {
         if (reduced) {
           st.opacity *= 0;
           break;
         }
-        const u = frac(t / period + phase);
+        if (t < (m.delay ?? 0)) {
+          st.opacity *= 0;
+          break;
+        }
+        const u = frac((t - (m.delay ?? 0)) / period + phase);
         st.ty += -amp * u;
         st.opacity *= Math.sin(Math.PI * u);
         break;

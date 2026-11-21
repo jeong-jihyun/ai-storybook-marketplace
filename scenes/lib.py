@@ -163,7 +163,7 @@ class Tori:
         if ears:
             for side, nm, ph in ((1, "ear_l", 0.0), (-1, "ear_r", 0.35)):
                 px, py = self.world(-20 * side, -146)
-                sc.add(f"{prefix}_{nm}", self.ear(side), [{"kind": "sway", "amp": ear_amp, "period": 4.2 + ph, "phase": ph}] + extra, px, py)
+                sc.add(f"{prefix}_{nm}", self.ear(side), [{"kind": "sway", "amp": ear_amp, "period": 1.6 + ph, "burst": 2.4, "gap": 2.2, "phase": ph}] + extra, px, py)
         if body:
             sc.add(f"{prefix}_body", self.body(), [dict(m) for m in extra])
         sc.add(f"{prefix}_head", self.head(), [dict(m) for m in extra])

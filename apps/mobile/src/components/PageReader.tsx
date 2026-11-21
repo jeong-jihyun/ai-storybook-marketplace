@@ -120,7 +120,7 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard, moti
   );
   const renderText = (page: BookPage, style: React.ComponentProps<typeof NarratedText>['style']) => {
     const active = page.pageNumber === cur?.pageNumber;
-    return <NarratedText text={page.content} cues={active ? player.cues : []} on={prefs.captions && active} subscribe={active ? player.subscribe : null} style={style} />;
+    return <NarratedText text={page.content} cues={active ? player.cues : []} on={prefs.captions && active && !full} subscribe={active ? player.subscribe : null} style={style} />;
   };
 
   const renderBody = (item: Item) => {
@@ -131,11 +131,6 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard, moti
       return (
         <Pressable style={styles.fullPage} onPress={() => setUi((u) => !u)} accessibilityLabel="화면을 누르면 조작 버튼이 나타나요">
           {renderArt(item.page, fw, fh)}
-          {prefs.captions ? (
-            <View style={styles.fullCap} pointerEvents="none">
-              {renderText(item.page, styles.fullCapText)}
-            </View>
-          ) : null}
         </Pressable>
       );
     }
@@ -192,7 +187,6 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard, moti
         {full && (ui || atEnd) ? (
           <View style={styles.fullUi} pointerEvents="box-none">
             <View style={styles.fullTop} pointerEvents="box-none">
-              {!atEnd ? <FullBtn icon="text" label={prefs.captions ? '자막 끄기' : '자막 켜기'} on={prefs.captions} onPress={() => prefs.set({ captions: !prefs.captions })} /> : null}
               <FullBtn icon="contract" label="전체화면 끝내기" onPress={exitFull} />
             </View>
             {!atEnd ? (
@@ -292,8 +286,6 @@ const styles = StyleSheet.create({
   doneCard: { width: '100%', maxWidth: 420, backgroundColor: colors.surface, borderRadius: radius.lg, padding: space.xl, gap: space.md, alignItems: 'center' },
   doneBtns: { alignSelf: 'stretch', gap: space.sm },
   fullPage: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0b0e22' },
-  fullCap: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: space.xl, paddingTop: space.md, paddingBottom: space.xl, backgroundColor: 'rgba(8,10,28,0.72)' },
-  fullCapText: { fontFamily: fonts.body, fontSize: 20, lineHeight: 30, color: '#fff', textAlign: 'center' },
   fullUi: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, justifyContent: 'space-between', padding: space.md },
   fullTop: { flexDirection: 'row', justifyContent: 'flex-end', gap: space.sm },
   fullBottom: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.lg, marginBottom: 110 },

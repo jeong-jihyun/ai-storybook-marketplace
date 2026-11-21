@@ -1,16 +1,22 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { BookPage } from '@storybook/shared-types';
-import { Image } from 'expo-image';
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, View, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { resolveAsset } from '../services/api';
+import { narrationFor, useNarrationManifest } from '../motion/narration';
+import { useReaderPrefs } from '../motion/prefs';
+import { useStoryPlayer } from '../motion/useStoryPlayer';
 import { colors, MIN_TOUCH, radius, space, type as t } from '../theme';
+import { NarratedText } from './NarratedText';
+import { nextSpeed, PlayerBar } from './PlayerBar';
+import { StoryArt } from './StoryArt';
 
 type Item = { kind: 'page'; page: BookPage } | { kind: 'end' };
 
 /**
  * 그림책 넘겨 보기 (미리보기·구매한 책 공통).
  * 손가락으로 옆으로 넘기거나 아래 화살표로 넘긴다. 마지막 장 뒤에 endCard 를 보여 준다.
+ * 읽어주기: 낭독 음성 + 그림 전체 움직임 + 읽는 문장 따라가는 자막 (재생 위치가 기준 시계).
  */
 export function PageReader({ pages, totalPages, caption, endLabel, endCard }: { pages: BookPage[]; totalPages: number; caption: (page: number) => string; endLabel: string; endCard: ReactNode }) {
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -45,6 +51,47 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard }: { 
   };
   const atEnd = index >= items.length - 1;
 
+  // ---- 읽어주기 (음성 + 움직임 + 자막) ----
+  const prefs = useReaderPrefs();
+  useEffect(() => void prefs.hydrate(), []); // eslint-disable-line react-hooks/exhaustive-deps
+  const manifest = useNarrationManifest();
+  const bookId = pages[0]?.bookId ?? '';
+  const cur = pages[index];
+  const curNarration = narrationFor(manifest.data, bookId, cur?.pageNumber ?? -1);
+  const voiceReady = !!manifest.data?.manifest.books[bookId];
+  const playerPage = useMemo(
+    () => (cur ? { pageNumber: cur.pageNumber, content: cur.content, audio: curNarration ? { url: curNarration.url, duration: curNarration.duration, cues: curNarration.cues } : null } : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [cur?.pageNumber, cur?.content, curNarration?.url],
+  );
+  const player = useStoryPlayer({
+    page: playerPage,
+    hasNext: index < pages.length - 1,
+    speed: prefs.speed,
+    narration: prefs.narration,
+    onNext: () => go(index + 1),
+  });
+
+  const renderArt = (page: BookPage, w: number, h: number) => (
+    <StoryArt
+      uri={resolveAsset(page.imageUrl)}
+      bookId={page.bookId}
+      pageNumber={page.pageNumber}
+      width={w}
+      height={h}
+      active={page.pageNumber === cur?.pageNumber}
+      duration={player.duration}
+      reduced={prefs.reduceMotion}
+      subscribe={player.subscribe}
+      getTime={player.getTime}
+      label={`${page.pageNumber}쪽 그림`}
+    />
+  );
+  const renderText = (page: BookPage, style: React.ComponentProps<typeof NarratedText>['style']) => {
+    const active = page.pageNumber === cur?.pageNumber;
+    return <NarratedText text={page.content} cues={active ? player.cues : []} on={prefs.captions && active} subscribe={active ? player.subscribe : null} style={style} />;
+  };
+
   return (
     <>
       <View style={{ flex: 1 }} onLayout={onLayout}>
@@ -59,6 +106,7 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard }: { 
             initialScrollIndex={index}
             keyExtractor={(it) => (it.kind === 'page' ? `p${it.page.pageNumber}` : 'end')}
             onScroll={onScroll}
+            extraData={`${index}|${prefs.captions}|${prefs.reduceMotion}|${player.duration}|${player.cues.length}`}
             scrollEventThrottle={32}
             getItemLayout={(_, i) => ({ length: width, offset: width * i, index: i })}
             renderItem={({ item }) => (
@@ -66,27 +114,15 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard }: { 
                 {item.kind === 'page' ? (
                   side ? (
                     <View style={styles.sideRow}>
-                      <Image
-                        source={{ uri: resolveAsset(item.page.imageUrl) }}
-                        style={[styles.art, { width: artW, height: artH }]}
-                        contentFit="cover"
-                        transition={200}
-                        accessibilityLabel={`${item.page.pageNumber}쪽 그림`}
-                      />
+                      {renderArt(item.page, artW, artH)}
                       <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.sideText}>
-                        <Text style={t.story}>{item.page.content}</Text>
+                        {renderText(item.page, t.story)}
                       </ScrollView>
                     </View>
                   ) : (
                     <ScrollView contentContainerStyle={styles.page}>
-                      <Image
-                        source={{ uri: resolveAsset(item.page.imageUrl) }}
-                        style={[styles.art, { height: artH }]}
-                        contentFit="cover"
-                        transition={200}
-                        accessibilityLabel={`${item.page.pageNumber}쪽 그림`}
-                      />
-                      <Text style={[t.story, { marginTop: space.xl }]}>{item.page.content}</Text>
+                      {renderArt(item.page, artW, artH)}
+                      {renderText(item.page, [t.story, { marginTop: space.xl }])}
                     </ScrollView>
                   )
                 ) : (
@@ -98,7 +134,26 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard }: { 
         ) : null}
       </View>
 
-      <View style={[styles.nav, side && { paddingVertical: 4 }]}>
+      <View style={side ? styles.bottomRow : undefined}>
+      {!atEnd ? (
+        <PlayerBar
+          compact={side}
+          playing={player.playing}
+          finished={player.finished}
+          voiceReady={voiceReady}
+          narration={prefs.narration}
+          captions={prefs.captions}
+          speed={prefs.speed}
+          reduceMotion={prefs.reduceMotion}
+          onToggle={player.playing ? player.pause : player.play}
+          onNarration={() => prefs.set({ narration: !prefs.narration })}
+          onCaptions={() => prefs.set({ captions: !prefs.captions })}
+          onSpeed={() => prefs.set({ speed: nextSpeed(prefs.speed) })}
+          onReduce={() => prefs.set({ reduceMotion: !prefs.reduceMotion })}
+        />
+      ) : null}
+
+      <View style={[styles.nav, side && styles.navSide]}>
         <Pressable onPress={() => go(index - 1)} disabled={index === 0} style={[styles.navBtn, index === 0 && { opacity: 0.35 }]} accessibilityRole="button" accessibilityLabel="이전 쪽">
           <Ionicons name="chevron-back" size={26} color={colors.ink} />
         </Pressable>
@@ -116,6 +171,7 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard }: { 
           <Ionicons name="chevron-forward" size={26} color={colors.ink} />
         </Pressable>
       </View>
+      </View>
     </>
   );
 }
@@ -125,6 +181,8 @@ const styles = StyleSheet.create({
   sideRow: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space.xl, paddingHorizontal: space.xl, paddingVertical: space.lg },
   sideText: { flexGrow: 1, justifyContent: 'center', paddingVertical: space.md },
   art: { width: '100%', borderRadius: radius.lg, backgroundColor: colors.surfaceWarm },
+  bottomRow: { flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.surface },
+  navSide: { borderTopWidth: 0, paddingVertical: 4, gap: space.md },
   end: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: space.xxl, gap: space.md },
   nav: {
     flexDirection: 'row',

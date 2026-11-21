@@ -77,3 +77,11 @@ pnpm --filter @storybook/api seed:sql   # database/seeds/001_storybooks.sql
 - 3단계 독서: 뷰어, 이어 읽기, 비구매 전체 열람 차단
 - 4단계 관리자: 상품 등록·검수·판매 승인 웹
 - 5단계 출시 준비
+
+## 읽어주기 (낭독 음성 + 그림 움직임 + 자막) — 1단계
+
+- 읽기 화면(미리보기·구매한 책)의 `▶ 읽어줘요` 버튼으로 시작합니다. 목소리 켜기/끄기, 자막(읽는 문장 형광펜), 속도(0.8/1/1.25배), 그림 움직임 줄이기를 고를 수 있고 설정은 기억됩니다.
+- 낭독 음성: `audio/gen.py`가 `apps/api/src/seed/storybooks.json` 본문을 무료 Microsoft edge-tts로 쪽마다 MP3로 만들고, 문장별 자막 시간을 `audio/manifest.json`에 적습니다. GitHub Actions(`.github/workflows/voice.yml`)가 본문이 바뀔 때 자동으로 돌려 `audio/files/`에 올리고 jsDelivr CDN 캐시를 새로 고칩니다. (바뀐 쪽만 다시 만듦)
+- 음성이 아직 없으면 `목소리 준비중`으로 표시되고, 소리 없이 그림 움직임·자막만 동작합니다.
+- 그림 움직임 엔진: `apps/mobile/src/motion/` — 재생 위치(초)만으로 계산해서 멈추면 멈추고 되감아도 같은 모습입니다. 시험: `pnpm --filter mobile test`
+- 로컬에서 음성 흐름만 시험: `python audio/gen.py --mock` (신호음), 검사: `python audio/gen.py --check`

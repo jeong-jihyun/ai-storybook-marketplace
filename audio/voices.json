@@ -1,0 +1,7 @@
+{
+  "_설명": "동화 낭독 목소리. 무료 Microsoft edge-tts 목소리를 씁니다. rate(%)는 느리게(-) / 빠르게(+).",
+  "default": "narrator",
+  "voices": [
+    { "id": "narrator", "name": "동화 이야기꾼", "engine": "ko-KR-SunHiNeural", "pitch": 2, "rate": -8 }
+  ]
+}

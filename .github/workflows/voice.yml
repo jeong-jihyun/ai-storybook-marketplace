@@ -1,0 +1,60 @@
+name: 동화 낭독 음성 만들기
+
+# 동화 본문(시드)이나 목소리 설정이 바뀌면 페이지별 낭독 MP3를 만들어 저장소에 올리고,
+# jsDelivr CDN 캐시를 새로 고친다. (무료 edge-tts 사용)
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/src/seed/storybooks.json"
+      - "audio/gen.py"
+      - "audio/voices.json"
+      - ".github/workflows/voice.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: voice
+  cancel-in-progress: false
+
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 도구 설치 (edge-tts, ffmpeg)
+        run: |
+          pip install "edge-tts>=7,<8"
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
+      - name: 본문을 음성으로 만들기
+        run: python audio/gen.py
+
+      - name: 만든 음성 파일 올리기
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A audio/files audio/manifest.json
+          if git diff --cached --quiet; then
+            echo "바뀐 음성이 없어요"
+          else
+            git commit -m "chore: 동화 낭독 음성 생성 (자동)"
+            git pull --rebase origin main
+            git push
+          fi
+
+      - name: CDN(jsDelivr) 캐시 새로 고치기
+        run: |
+          curl -s "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/audio/manifest.json" > /dev/null
+          for f in audio/files/*/*.mp3; do
+            curl -s "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/$f" > /dev/null
+          done
+          echo "CDN 갱신 요청 완료"

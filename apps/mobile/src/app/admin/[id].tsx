@@ -1,5 +1,5 @@
 // ADM-002 관리자 · 동화 고치기 (글·그림·표지·가격·공개 여부·카테고리·목소리·움직임)
-import { NARRATION_VOICES, type AdminBookDetail, type AdminPage, type BookStatus, type MotionCamera, type MotionParticles } from '@storybook/shared-types';
+import { NARRATION_VOICES, type AdminBookDetail, type AdminPage, type BookStatus, type MotionCamera, type MotionParticles, type MotionTransition } from '@storybook/shared-types';
 import { useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { Redirect, Stack, useLocalSearchParams } from 'expo-router';
@@ -31,6 +31,14 @@ const CAMERA_OPTIONS: { value: MotionCamera; label: string }[] = [
   { value: 'panRight', label: '오른쪽으로' },
   { value: 'still', label: '고정' },
 ];
+const TRANSITION_OPTIONS: { value: MotionTransition; label: string }[] = [
+  { value: 'slide', label: '옆으로 밀기' },
+  { value: 'fade', label: '페이드' },
+  { value: 'flip', label: '책장 넘기기' },
+  { value: 'zoom', label: '줌' },
+  { value: 'up', label: '위로 밀기' },
+  { value: 'curtain', label: '커튼 열기' },
+];
 const PARTICLE_OPTIONS: { value: MotionParticles; label: string }[] = [
   { value: 'auto', label: '자동' },
   { value: 'sparkle', label: '반짝이' },
@@ -55,6 +63,7 @@ interface Form {
   motionOn: boolean;
   camera: MotionCamera;
   particles: MotionParticles;
+  transition: MotionTransition;
 }
 
 const toForm = (b: AdminBookDetail): Form => ({
@@ -72,6 +81,7 @@ const toForm = (b: AdminBookDetail): Form => ({
   motionOn: b.motion.enabled,
   camera: b.motion.camera,
   particles: b.motion.particles,
+  transition: b.motion.transition ?? 'slide',
 });
 
 const intOr = (s: string, fallback: number) => (/^-?\d+$/.test(s.trim()) ? parseInt(s.trim(), 10) : fallback);
@@ -143,7 +153,7 @@ export default function AdminEdit() {
           categorySlugs: form.categorySlugs,
           narrationVoice: form.voice as AdminBookDetail['narrationVoice'],
           narrationRate: intOr(form.rate, 0),
-          motion: { enabled: form.motionOn, camera: form.camera, particles: form.particles },
+          motion: { enabled: form.motionOn, camera: form.camera, particles: form.particles, transition: form.transition },
         }),
       { title: '저장했어요', message: '고친 내용이 앱에 바로 반영돼요.\n목소리나 글을 바꿨다면 새 음성이 만들어질 때까지(보통 30분 안쪽) 소리 없이 그림만 움직여요.' },
     );
@@ -211,6 +221,8 @@ export default function AdminEdit() {
         <View style={styles.bleed}><Chips options={VOICE_OPTIONS} value={form.voice} onChange={(v) => set('voice', v)} /></View>
         <Text style={t.cardTitle}>읽는 속도</Text>
         <View style={styles.bleed}><Chips options={RATE_OPTIONS} value={form.rate} onChange={(v) => set('rate', v)} /></View>
+        <Text style={t.cardTitle}>쪽 넘김 효과</Text>
+        <View style={styles.bleed}><Chips options={TRANSITION_OPTIONS} value={form.transition} onChange={(v) => set('transition', v)} /></View>
         <Check checked={form.motionOn} onChange={(v) => set('motionOn', v)} label="그림을 움직여요" sub="끄면 이 책은 그림이 가만히 있어요" />
         {form.motionOn ? (
           <>

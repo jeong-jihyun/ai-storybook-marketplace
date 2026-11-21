@@ -110,13 +110,17 @@ export interface BookPreview {
 
 export type MotionCamera = 'auto' | 'zoomIn' | 'zoomOut' | 'panLeft' | 'panRight' | 'still';
 export type MotionParticles = 'auto' | 'sparkle' | 'snow' | 'none';
+/** 쪽을 넘길 때의 전환 효과 */
+export type MotionTransition = 'slide' | 'fade' | 'flip' | 'zoom' | 'up' | 'curtain';
 export interface MotionSettings {
   /** false 면 이 책은 그림을 움직이지 않는다 */
   enabled: boolean;
   camera: MotionCamera;
   particles: MotionParticles;
+  /** 쪽 넘김 효과 (책마다 관리자가 정함, 없으면 옆으로 밀기) */
+  transition: MotionTransition;
 }
-export const DEFAULT_MOTION: MotionSettings = { enabled: true, camera: 'auto', particles: 'auto' };
+export const DEFAULT_MOTION: MotionSettings = { enabled: true, camera: 'auto', particles: 'auto', transition: 'slide' };
 
 /** 낭독 목소리 선택지 (id 는 audio/voices.json 과 같아야 한다) */
 export const NARRATION_VOICES = [

@@ -1,12 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { ArrayMaxSize, IsArray, IsBoolean, IsIn, IsInt, IsOptional, IsString, Max, MaxLength, Min, MinLength, ValidateNested } from 'class-validator';
-import { MOTION_CAMERAS, MOTION_PARTICLES, VOICE_IDS } from '../common/motion-defaults';
+import { MOTION_CAMERAS, MOTION_PARTICLES, MOTION_TRANSITIONS, VOICE_IDS } from '../common/motion-defaults';
 
 export class MotionDto {
   @ApiPropertyOptional() @IsOptional() @IsBoolean() enabled?: boolean;
   @ApiPropertyOptional({ enum: MOTION_CAMERAS }) @IsOptional() @IsIn(MOTION_CAMERAS as unknown as string[]) camera?: string;
   @ApiPropertyOptional({ enum: MOTION_PARTICLES }) @IsOptional() @IsIn(MOTION_PARTICLES as unknown as string[]) particles?: string;
+  @ApiPropertyOptional({ enum: MOTION_TRANSITIONS }) @IsOptional() @IsIn(MOTION_TRANSITIONS as unknown as string[]) transition?: string;
 }
 
 export class UpdateBookDto {

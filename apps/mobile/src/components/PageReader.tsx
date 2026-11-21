@@ -1,15 +1,17 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { BookPage, MotionSettings } from '@storybook/shared-types';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { FlatList, Pressable, ScrollView, StyleSheet, Text, View, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { useNavigation } from 'expo-router';
+import { FlatList, Platform, Pressable, ScrollView, StyleSheet, Text, View, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { resolveAsset } from '../services/api';
 import { narrationFor, useNarrationManifest } from '../motion/narration';
 import { useReaderPrefs } from '../motion/prefs';
 import { useStoryPlayer } from '../motion/useStoryPlayer';
-import { colors, MIN_TOUCH, radius, space, type as t } from '../theme';
+import { colors, fonts, MIN_TOUCH, radius, space, type as t } from '../theme';
 import { Button } from './Button';
 import { NarratedText } from './NarratedText';
 import { nextSpeed, PlayerBar } from './PlayerBar';
+import { PageStage } from './PageStage';
 import { StoryArt } from './StoryArt';
 
 type Item = { kind: 'page'; page: BookPage } | { kind: 'end' };
@@ -25,6 +27,32 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard, moti
   // 가로(넓고 낮은 화면): 그림 왼쪽 · 글 오른쪽
   const side = size.width > size.height * 1.15 && size.width >= 560;
   const [index, setIndex] = useState(0);
+  const kind = motion?.transition ?? 'slide';
+  // 전체화면 (그림 가득 + 자막): 위·아래 메뉴를 숨기고, 화면을 누르면 조작 버튼이 나타난다
+  const [full, setFull] = useState(false);
+  const [ui, setUi] = useState(true);
+  const navigation = useNavigation();
+  useEffect(() => {
+    navigation.setOptions({ headerShown: !full });
+    return () => navigation.setOptions({ headerShown: true });
+  }, [full, navigation]);
+  const enterFull = () => {
+    setFull(true);
+    setUi(true);
+    if (Platform.OS === 'web') (document.documentElement as HTMLElement & { requestFullscreen?: () => Promise<void> }).requestFullscreen?.()?.catch(() => {});
+  };
+  const exitFull = () => {
+    setFull(false);
+    if (Platform.OS === 'web' && document.fullscreenElement) void document.exitFullscreen().catch(() => {});
+  };
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const onChange = () => {
+      if (!document.fullscreenElement) setFull(false);
+    };
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
   const listRef = useRef<FlatList<Item>>(null);
   const items: Item[] = [...pages.map((page) => ({ kind: 'page' as const, page })), { kind: 'end' }];
 
@@ -47,7 +75,7 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard, moti
   );
   const go = (i: number) => {
     const next = Math.max(0, Math.min(items.length - 1, i));
-    listRef.current?.scrollToOffset({ offset: next * width, animated: true });
+    if (kind === 'slide') listRef.current?.scrollToOffset({ offset: next * width, animated: true });
     setIndex(next);
   };
   const atEnd = index >= items.length - 1;
@@ -95,45 +123,86 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard, moti
     return <NarratedText text={page.content} cues={active ? player.cues : []} on={prefs.captions && active} subscribe={active ? player.subscribe : null} style={style} />;
   };
 
+  const renderBody = (item: Item) => {
+    if (item.kind === 'end') return <View style={[styles.end, full && { backgroundColor: colors.bg }]}>{endCard}</View>;
+    if (full) {
+      const fw = Math.min(width, size.height * (4 / 3));
+      const fh = (fw * 3) / 4;
+      return (
+        <Pressable style={styles.fullPage} onPress={() => setUi((u) => !u)} accessibilityLabel="화면을 누르면 조작 버튼이 나타나요">
+          {renderArt(item.page, fw, fh)}
+          {prefs.captions ? (
+            <View style={styles.fullCap} pointerEvents="none">
+              {renderText(item.page, styles.fullCapText)}
+            </View>
+          ) : null}
+        </Pressable>
+      );
+    }
+    return side ? (
+      <View style={styles.sideRow}>
+        {renderArt(item.page, artW, artH)}
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.sideText}>
+          {renderText(item.page, t.story)}
+        </ScrollView>
+      </View>
+    ) : (
+      <ScrollView contentContainerStyle={styles.page}>
+        {renderArt(item.page, artW, artH)}
+        {renderText(item.page, [t.story, { marginTop: space.xl }])}
+      </ScrollView>
+    );
+  };
+
+  // 전체화면에서 재생 중이면 조작 버튼을 잠시 뒤 숨김
+  useEffect(() => {
+    if (!full) return;
+    if (!player.playing) {
+      setUi(true);
+      return;
+    }
+    if (!ui) return;
+    const h = setTimeout(() => setUi(false), 3500);
+    return () => clearTimeout(h);
+  }, [full, ui, player.playing]);
+
   return (
     <>
-      <View style={{ flex: 1 }} onLayout={onLayout}>
-        {width > 0 ? (
+      <View style={[{ flex: 1 }, full && { backgroundColor: '#0b0e22' }]} onLayout={onLayout}>
+        {width > 0 && kind !== 'slide' ? (
+          <PageStage index={index} width={size.width} height={size.height} kind={kind} instant={prefs.reduceMotion} bg={full ? '#0b0e22' : colors.bg} render={(i) => renderBody(items[i])} onSwipe={(d) => go(index + d)} />
+        ) : null}
+        {width > 0 && kind === 'slide' ? (
           <FlatList
             ref={listRef}
             data={items}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            key={side ? 'side' : 'stack'}
+            key={`${side ? 'side' : 'stack'}|${full}`}
             initialScrollIndex={index}
             keyExtractor={(it) => (it.kind === 'page' ? `p${it.page.pageNumber}` : 'end')}
             onScroll={onScroll}
             extraData={`${index}|${prefs.captions}|${prefs.reduceMotion}|${player.duration}|${player.cues.length}`}
             scrollEventThrottle={32}
             getItemLayout={(_, i) => ({ length: width, offset: width * i, index: i })}
-            renderItem={({ item }) => (
-              <View style={{ width, flex: 1 }}>
-                {item.kind === 'page' ? (
-                  side ? (
-                    <View style={styles.sideRow}>
-                      {renderArt(item.page, artW, artH)}
-                      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.sideText}>
-                        {renderText(item.page, t.story)}
-                      </ScrollView>
-                    </View>
-                  ) : (
-                    <ScrollView contentContainerStyle={styles.page}>
-                      {renderArt(item.page, artW, artH)}
-                      {renderText(item.page, [t.story, { marginTop: space.xl }])}
-                    </ScrollView>
-                  )
-                ) : (
-                  <View style={styles.end}>{endCard}</View>
-                )}
-              </View>
-            )}
+            renderItem={({ item }) => <View style={{ width, flex: 1 }}>{renderBody(item)}</View>}
           />
+        ) : null}
+        {full && (ui || atEnd) ? (
+          <View style={styles.fullUi} pointerEvents="box-none">
+            <View style={styles.fullTop} pointerEvents="box-none">
+              {!atEnd ? <FullBtn icon="text" label={prefs.captions ? '자막 끄기' : '자막 켜기'} on={prefs.captions} onPress={() => prefs.set({ captions: !prefs.captions })} /> : null}
+              <FullBtn icon="contract" label="전체화면 끝내기" onPress={exitFull} />
+            </View>
+            {!atEnd ? (
+              <View style={styles.fullBottom} pointerEvents="box-none">
+                <FullBtn icon="chevron-back" label="이전 쪽" onPress={() => go(index - 1)} disabled={index === 0} />
+                <FullBtn icon={player.playing ? 'pause' : player.finished ? 'refresh' : 'play'} label={player.playing ? '일시정지' : '읽어주기 시작'} big onPress={player.playing ? player.pause : player.play} />
+                <FullBtn icon="chevron-forward" label="다음 쪽" onPress={() => go(index + 1)} />
+              </View>
+            ) : null}
+          </View>
         ) : null}
         {player.finished && index === pages.length - 1 ? (
           <View style={styles.doneWrap} pointerEvents="box-none">
@@ -156,6 +225,8 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard, moti
         ) : null}
       </View>
 
+      {full ? null : (
+      <>
       <View style={side ? styles.bottomRow : undefined}>
       {!atEnd ? (
         <PlayerBar
@@ -172,6 +243,7 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard, moti
           onCaptions={() => prefs.set({ captions: !prefs.captions })}
           onSpeed={() => prefs.set({ speed: nextSpeed(prefs.speed) })}
           onReduce={() => prefs.set({ reduceMotion: !prefs.reduceMotion })}
+          onFull={enterFull}
         />
       ) : null}
 
@@ -194,7 +266,18 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard, moti
         </Pressable>
       </View>
       </View>
+      </>
+      )}
     </>
+  );
+}
+
+function FullBtn({ icon, label, onPress, big, on, disabled }: { icon: React.ComponentProps<typeof Ionicons>['name']; label: string; onPress: () => void; big?: boolean; on?: boolean; disabled?: boolean }) {
+  const size = big ? MIN_TOUCH + 16 : MIN_TOUCH;
+  return (
+    <Pressable onPress={onPress} disabled={disabled} accessibilityRole="button" accessibilityLabel={label} style={[styles.fullBtn, { width: size, height: size }, on === false && { opacity: 0.6 }, disabled && { opacity: 0.3 }, big && { backgroundColor: colors.primary }]}>
+      <Ionicons name={icon} size={big ? 30 : 24} color={colors.white} />
+    </Pressable>
   );
 }
 
@@ -208,6 +291,13 @@ const styles = StyleSheet.create({
   doneWrap: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', padding: space.xl, backgroundColor: 'rgba(20,24,50,0.45)' },
   doneCard: { width: '100%', maxWidth: 420, backgroundColor: colors.surface, borderRadius: radius.lg, padding: space.xl, gap: space.md, alignItems: 'center' },
   doneBtns: { alignSelf: 'stretch', gap: space.sm },
+  fullPage: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0b0e22' },
+  fullCap: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: space.xl, paddingTop: space.md, paddingBottom: space.xl, backgroundColor: 'rgba(8,10,28,0.72)' },
+  fullCapText: { fontFamily: fonts.body, fontSize: 20, lineHeight: 30, color: '#fff', textAlign: 'center' },
+  fullUi: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, justifyContent: 'space-between', padding: space.md },
+  fullTop: { flexDirection: 'row', justifyContent: 'flex-end', gap: space.sm },
+  fullBottom: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.lg, marginBottom: 110 },
+  fullBtn: { borderRadius: 999, backgroundColor: 'rgba(8,10,28,0.65)', alignItems: 'center', justifyContent: 'center' },
   end: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: space.xxl, gap: space.md },
   nav: {
     flexDirection: 'row',

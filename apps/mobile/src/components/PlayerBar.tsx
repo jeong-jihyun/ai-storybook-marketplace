@@ -38,6 +38,7 @@ export function PlayerBar({
   onCaptions,
   onSpeed,
   onReduce,
+  onFull,
 }: {
   compact?: boolean;
   playing: boolean;
@@ -52,6 +53,7 @@ export function PlayerBar({
   onCaptions: () => void;
   onSpeed: () => void;
   onReduce: () => void;
+  onFull: () => void;
 }) {
   const useVoice = voiceReady && narration;
   const main = playing ? '멈춰요' : finished ? '다시 해요' : useVoice ? '읽어줘요' : '움직여요';
@@ -73,6 +75,7 @@ export function PlayerBar({
         <Text style={styles.togLabel}>속도</Text>
       </Pressable>
       <Toggle icon="color-wand" label="움직임" on={!reduceMotion} onPress={onReduce} a11y={reduceMotion ? '그림 움직임 켜기' : '그림 움직임 줄이기'} />
+      <Toggle icon="expand" label="전체화면" on={false} onPress={onFull} a11y="전체화면으로 보기" />
     </View>
   );
 }

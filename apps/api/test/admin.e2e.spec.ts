@@ -173,15 +173,19 @@ describe.each(targets)('관리자 콘텐츠 수정 (%s)', (_name, databaseUrl) =
 
   it('목소리·움직임 설정: 저장되고 미리보기 응답에 움직임이 실린다', async () => {
     const r = await api().patch(`/api/v1/admin/books/${TORI}`).set(bearer(admin)).send({ narrationVoice: 'uncle', narrationRate: -10, motion: { camera: 'panLeft', particles: 'snow' } }).expect(200);
-    expect(r.body).toMatchObject({ narrationVoice: 'uncle', narrationRate: -10, motion: { enabled: true, camera: 'panLeft', particles: 'snow' } });
+    expect(r.body).toMatchObject({ narrationVoice: 'uncle', narrationRate: -10, motion: { enabled: true, camera: 'panLeft', particles: 'snow', transition: 'slide' } });
     const pre = await api().get(`/api/v1/books/${TORI}/preview`).expect(200);
-    expect(pre.body.motion).toEqual({ enabled: true, camera: 'panLeft', particles: 'snow' });
+    expect(pre.body.motion).toEqual({ enabled: true, camera: 'panLeft', particles: 'snow', transition: 'slide' });
     // 일부만 바꿔도 나머지는 유지
     const off = await api().patch(`/api/v1/admin/books/${TORI}`).set(bearer(admin)).send({ motion: { enabled: false } }).expect(200);
-    expect(off.body.motion).toEqual({ enabled: false, camera: 'panLeft', particles: 'snow' });
+    expect(off.body.motion).toEqual({ enabled: false, camera: 'panLeft', particles: 'snow', transition: 'slide' });
     await api().patch(`/api/v1/admin/books/${TORI}`).set(bearer(admin)).send({ narrationVoice: 'robot' }).expect(400);
     await api().patch(`/api/v1/admin/books/${TORI}`).set(bearer(admin)).send({ narrationRate: 99 }).expect(400);
     await api().patch(`/api/v1/admin/books/${TORI}`).set(bearer(admin)).send({ motion: { camera: 'spin' } }).expect(400);
+    await api().patch(`/api/v1/admin/books/${TORI}`).set(bearer(admin)).send({ motion: { transition: 'explode' } }).expect(400);
+    const fl = await api().patch(`/api/v1/admin/books/${TORI}`).set(bearer(admin)).send({ motion: { transition: 'flip' } }).expect(200);
+    expect(fl.body.motion.transition).toBe('flip');
+    expect((await api().get(`/api/v1/books/${TORI}/preview`).expect(200)).body.motion.transition).toBe('flip');
     await api().patch(`/api/v1/admin/books/${TORI}`).set(bearer(admin)).send({ narrationVoice: 'narrator', narrationRate: 0, motion: DEFAULT_MOTION_SETTINGS }).expect(200);
   });
 

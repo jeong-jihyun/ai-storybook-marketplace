@@ -1,7 +1,9 @@
 {
-  "_설명": "동화 낭독 목소리. 무료 Microsoft edge-tts 목소리를 씁니다. rate(%)는 느리게(-) / 빠르게(+).",
+  "_설명": "동화 낭독 목소리. 무료 Microsoft edge-tts 목소리를 씁니다. id 는 관리자 화면의 선택지(packages/shared-types NARRATION_VOICES)와 같아야 해요. rate(%)는 느리게(-) / 빠르게(+), 책마다 관리자가 더하거나 뺄 수 있어요.",
   "default": "narrator",
   "voices": [
-    { "id": "narrator", "name": "동화 이야기꾼", "engine": "ko-KR-SunHiNeural", "pitch": 2, "rate": -8 }
+    { "id": "narrator", "name": "동화 이야기꾼 (여성)", "engine": "ko-KR-SunHiNeural", "pitch": 2, "rate": -8 },
+    { "id": "uncle", "name": "다정한 아저씨 (남성)", "engine": "ko-KR-InJoonNeural", "pitch": -2, "rate": -10 },
+    { "id": "friend", "name": "또렷한 친구 (남성)", "engine": "ko-KR-HyunsuMultilingualNeural", "pitch": 0, "rate": -6 }
   ]
 }

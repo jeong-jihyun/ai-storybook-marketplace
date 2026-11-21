@@ -2,7 +2,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ComingSoon } from '../../components/ComingSoon';
 import { LoginPrompt } from '../../components/LoginPrompt';
@@ -18,6 +18,16 @@ export default function My() {
   const qc = useQueryClient();
   const user = useSession((s) => s.user);
   const [notice, setNotice] = useState<null | 'restore' | 'logout'>(null);
+
+  // 서버가 아는 최신 내 정보로 맞춘다 (예: 관리자로 지정된 뒤에도 다시 로그인하지 않고 메뉴가 보이게)
+  const uid = user?.id;
+  useEffect(() => {
+    if (!uid) return;
+    api.me().then((me) => {
+      const cur = useSession.getState().user;
+      if (cur && me.id === cur.id && (me.isAdmin ?? false) !== (cur.isAdmin ?? false)) useSession.getState().setUser({ ...cur, ...me });
+    }).catch(() => undefined);
+  }, [uid]);
 
   const logout = async () => {
     try {
@@ -51,6 +61,12 @@ export default function My() {
             <MenuRow emoji="🔄" title="구매 복구" desc="새 폰·재설치 후 스토어 구매를 다시 불러오기" onPress={() => setNotice('restore')} />
             <Text style={[t.section, { marginTop: space.sm }]}>보호자 영역</Text>
             <MenuRow emoji="🔐" title="계정 관리" desc="닉네임·비밀번호·보호자 PIN 변경, 회원 탈퇴" onPress={() => router.push('/account')} />
+            {user.isAdmin ? (
+              <>
+                <Text style={[t.section, { marginTop: space.sm }]}>관리자</Text>
+                <MenuRow emoji="✏️" title="동화 관리" desc="글·그림·가격·공개 여부·목소리·움직임 고치기" onPress={() => router.push('/admin')} />
+              </>
+            ) : null}
             <MenuRow emoji="👋" title="로그아웃" onPress={() => void logout()} />
           </>
         )}

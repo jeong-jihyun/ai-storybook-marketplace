@@ -27,6 +27,7 @@ export default function PreviewScreen() {
         totalPages={p.totalPages}
         caption={() => ` · 무료 ${p.previewPages}쪽`}
         endLabel="미리보기 끝"
+        motion={p.motion}
         endCard={
           <>
             <Text style={{ fontSize: 56 }}>{owned ? '📖' : '🔒'}</Text>

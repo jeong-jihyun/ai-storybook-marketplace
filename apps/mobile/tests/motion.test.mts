@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { easings, motionFor, cameraAt, particlesAt, hashSeed, seeded, MAX_PARTICLES, estimateDuration } from '../src/motion/engine.ts';
+import { easings, motionFor, cameraAt, particlesAt, hashSeed, narrationMatchesText, seeded, MAX_PARTICLES, estimateDuration } from '../src/motion/engine.ts';
 import { splitSentences, activeCueIndex, activeSentenceIndex } from '../src/motion/captions.ts';
 
 const BOOK = 'b0000001-5b00-4c00-8000-000000000001';
@@ -110,4 +110,29 @@ test('목소리 없을 때 추정 자막: 전체 길이를 덮고 순서대로',
   assert.equal(cues[0].start, 0);
   assert.ok(Math.abs(cues[2].end - 12) < 1e-9);
   for (let i = 1; i < cues.length; i++) assert.ok(Math.abs(cues[i].start - cues[i - 1].end) < 1e-9);
+});
+
+test('글이 고쳐져 textHash 가 다르면 음성을 쓰지 않는다 (파이썬 gen.py 와 같은 해시)', () => {
+  // gen.py 로 계산한 값 (UTF-16 코드 단위 FNV-1a): 이모지 포함 문장
+  const t = '관리자가 고친 셋째 쪽이에요. 이모지 🌙 도 있어요.';
+  assert.equal(hashSeed(t), 2339200868);
+  assert.ok(narrationMatchesText(hashSeed('원래 글'), '원래 글'));
+  assert.equal(narrationMatchesText(hashSeed('원래 글'), '고친 글'), false);
+  assert.ok(narrationMatchesText(hashSeed('원래 글'), undefined)); // 글을 안 주면 확인하지 않음
+  assert.ok(narrationMatchesText(undefined, '아무 글')); // 옛 매니페스트는 그대로 사용
+});
+
+test('관리자 움직임 설정: 끄면 정지, 카메라·반짝이 고정, auto 는 원래대로', () => {
+  const base = motionFor(BOOK, 3);
+  assert.deepEqual(motionFor(BOOK, 3, { enabled: true, camera: 'auto', particles: 'auto' }), base);
+  const off = motionFor(BOOK, 3, { enabled: false, camera: 'zoomIn', particles: 'snow' });
+  assert.equal(off.camera, 'still');
+  assert.equal(particlesAt(off, 4).length, 0);
+  const c = cameraAt(off, 5, 20, false);
+  assert.equal(c.scale, 1);
+  assert.ok(c.tx === 0 && Math.abs(c.ty) === 0 && Math.abs(c.rotateDeg) === 0);
+  assert.equal(motionFor(BOOK, 3, { enabled: true, camera: 'panLeft', particles: 'none' }).camera, 'panLeft');
+  assert.equal(particlesAt(motionFor(BOOK, 3, { enabled: true, camera: 'auto', particles: 'none' }), 4).length, 0);
+  const still = motionFor(BOOK, 3, { enabled: true, camera: 'still', particles: 'auto' });
+  assert.equal(cameraAt(still, 5, 20, false).scale, 1);
 });

@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import type { BookPage } from '@storybook/shared-types';
+import type { BookPage, MotionSettings } from '@storybook/shared-types';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, View, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { resolveAsset } from '../services/api';
@@ -18,7 +18,7 @@ type Item = { kind: 'page'; page: BookPage } | { kind: 'end' };
  * 손가락으로 옆으로 넘기거나 아래 화살표로 넘긴다. 마지막 장 뒤에 endCard 를 보여 준다.
  * 읽어주기: 낭독 음성 + 그림 전체 움직임 + 읽는 문장 따라가는 자막 (재생 위치가 기준 시계).
  */
-export function PageReader({ pages, totalPages, caption, endLabel, endCard }: { pages: BookPage[]; totalPages: number; caption: (page: number) => string; endLabel: string; endCard: ReactNode }) {
+export function PageReader({ pages, totalPages, caption, endLabel, endCard, motion }: { pages: BookPage[]; totalPages: number; caption: (page: number) => string; endLabel: string; endCard: ReactNode; motion?: MotionSettings }) {
   const [size, setSize] = useState({ width: 0, height: 0 });
   const width = size.width;
   // 가로(넓고 낮은 화면): 그림 왼쪽 · 글 오른쪽
@@ -57,7 +57,7 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard }: { 
   const manifest = useNarrationManifest();
   const bookId = pages[0]?.bookId ?? '';
   const cur = pages[index];
-  const curNarration = narrationFor(manifest.data, bookId, cur?.pageNumber ?? -1);
+  const curNarration = narrationFor(manifest.data, bookId, cur?.pageNumber ?? -1, cur?.content);
   const voiceReady = !!manifest.data?.manifest.books[bookId];
   const playerPage = useMemo(
     () => (cur ? { pageNumber: cur.pageNumber, content: cur.content, audio: curNarration ? { url: curNarration.url, duration: curNarration.duration, cues: curNarration.cues } : null } : null),
@@ -85,6 +85,7 @@ export function PageReader({ pages, totalPages, caption, endLabel, endCard }: { 
       subscribe={player.subscribe}
       getTime={player.getTime}
       label={`${page.pageNumber}쪽 그림`}
+      motion={motion}
     />
   );
   const renderText = (page: BookPage, style: React.ComponentProps<typeof NarratedText>['style']) => {

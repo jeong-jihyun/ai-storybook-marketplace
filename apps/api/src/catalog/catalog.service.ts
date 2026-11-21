@@ -1,5 +1,5 @@
 import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import type { BookDetail, BookPage, BookPreview, BookSummary, Category, HomeFeed, Paginated } from '@storybook/shared-types';
+import type { BookDetail, BookPage, BookPreview, BookSummary, Category, HomeFeed, MotionSettings, Paginated } from '@storybook/shared-types';
 import { assetUrl } from '../common/asset-url';
 import { COMMERCE_STORE, type CommerceStore } from '../commerce/commerce.store';
 import { CATALOG_REPOSITORY, type BookQuery, type BookRecord, type CatalogRepository, type PageRecord } from './catalog.repository';
@@ -91,7 +91,7 @@ export class CatalogService {
     const b = await this.getPublished(id);
     const n = Math.min(b.previewPages, b.pageCount);
     const pages = await this.repo.findPages(id, 1, n);
-    return { bookId: id, totalPages: b.pageCount, previewPages: n, pages: pages.map((p) => this.toPage(p)) };
+    return { bookId: id, totalPages: b.pageCount, previewPages: n, pages: pages.map((p) => this.toPage(p)), motion: b.motion };
   }
 
   /** 페이지 한 장: 미리보기 범위는 누구나, 그 밖은 구매한 사람만 (READ-001) */
@@ -108,11 +108,11 @@ export class CatalogService {
   }
 
   /** 구매한 책의 전체 페이지 (판매 중지된 책도 이미 산 사람은 읽을 수 있다) */
-  async ownedPages(bookId: string, from = 1, to = 10_000): Promise<{ title: string; totalPages: number; pages: BookPage[] }> {
+  async ownedPages(bookId: string, from = 1, to = 10_000): Promise<{ title: string; totalPages: number; pages: BookPage[]; motion: MotionSettings }> {
     const b = await this.repo.findBookById(bookId);
     if (!b) throw new NotFoundException({ code: 'BOOK_NOT_FOUND', message: '동화책을 찾을 수 없어요.' });
     const pages = await this.repo.findPages(bookId, from, Math.min(to, b.pageCount));
     if (from > b.pageCount || from < 1) throw new NotFoundException({ code: 'PAGE_NOT_FOUND', message: '없는 페이지예요.' });
-    return { title: b.title, totalPages: b.pageCount, pages: pages.map((p) => this.toPage(p)) };
+    return { title: b.title, totalPages: b.pageCount, pages: pages.map((p) => this.toPage(p)), motion: b.motion };
   }
 }

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import type { BookStatus } from '@storybook/shared-types';
+import { DEFAULT_MOTION_SETTINGS } from '../common/motion-defaults';
 import seed from '../seed/storybooks.json';
-import type { BookQuery, BookRecord, CatalogRepository, CategoryRecord, PageRecord } from './catalog.repository';
+import type { BookPatch, BookQuery, BookRecord, CatalogRepository, CategoryRecord, PageRecord } from './catalog.repository';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -28,7 +29,15 @@ export class SeedCatalogRepository implements CatalogRepository {
       const c = seed.categories.find((x) => x.slug === slug)!;
       return { id: c.id, slug: c.slug, name: c.name };
     }),
+    narrationVoice: 'narrator',
+    narrationRate: 0,
+    motion: { ...DEFAULT_MOTION_SETTINGS },
   }));
+  /** 쪽 본문·그림 (관리자가 고칠 수 있게 시드를 복사해 둠 — 서버를 다시 켜면 시드로 돌아감) */
+  private readonly pages = new Map<string, { content: string; imageKey: string }[]>(
+    seed.books.map((b) => [b.id, b.pages.map((content, i) => ({ content, imageKey: `books/${b.id}/page-${pad(i + 1)}.png` }))]),
+  );
+  readonly auditLog: { adminId: string; action: string; bookId: string; detail: unknown }[] = [];
 
   async listCategories(): Promise<CategoryRecord[]> {
     return this.categories
@@ -77,10 +86,74 @@ export class SeedCatalogRepository implements CatalogRepository {
   }
 
   async findPages(bookId: string, fromPage: number, toPage: number): Promise<PageRecord[]> {
-    const book = seed.books.find((b) => b.id === bookId);
-    if (!book) return [];
-    return book.pages
-      .map((content, i) => ({ bookId, pageNumber: i + 1, content, imageKey: `books/${bookId}/page-${pad(i + 1)}.png` }))
+    const list = this.pages.get(bookId);
+    if (!list) return [];
+    return list
+      .map((p, i) => ({ bookId, pageNumber: i + 1, content: p.content, imageKey: p.imageKey }))
       .filter((p) => p.pageNumber >= fromPage && p.pageNumber <= toPage);
+  }
+
+  // ── 관리자 ──
+  async listAllBooks() {
+    return [...this.books].sort((a, b) => a.title.localeCompare(b.title, 'ko'));
+  }
+
+  async updateBook(id: string, patch: BookPatch) {
+    const b = this.books.find((x) => x.id === id);
+    if (!b) return null;
+    const { categorySlugs, ...rest } = patch;
+    Object.assign(b, rest);
+    if (categorySlugs) {
+      b.categories = categorySlugs.map((slug) => {
+        const c = seed.categories.find((x) => x.slug === slug)!;
+        return { id: c.id, slug: c.slug, name: c.name };
+      });
+    }
+    if (patch.status === 'PUBLISHED' && !b.publishedAt) b.publishedAt = new Date();
+    return b;
+  }
+
+  async setPageContent(bookId: string, n: number, content: string) {
+    const p = this.pages.get(bookId)?.[n - 1];
+    if (!p) return false;
+    p.content = content;
+    return true;
+  }
+
+  async addPage(bookId: string, content: string) {
+    const list = this.pages.get(bookId);
+    const b = this.books.find((x) => x.id === bookId);
+    if (!list || !b) return null;
+    list.push({ content, imageKey: '' });
+    b.pageCount = list.length;
+    return { bookId, pageNumber: list.length, content, imageKey: '' };
+  }
+
+  async removeLastPage(bookId: string) {
+    const list = this.pages.get(bookId);
+    const b = this.books.find((x) => x.id === bookId);
+    if (!list || !b || list.length <= 1) return null;
+    list.pop();
+    b.pageCount = list.length;
+    b.previewPages = Math.min(b.previewPages, list.length);
+    return list.length + 1;
+  }
+
+  async setPageImage(bookId: string, n: number, imageKey: string) {
+    const p = this.pages.get(bookId)?.[n - 1];
+    if (!p) return false;
+    p.imageKey = imageKey;
+    return true;
+  }
+
+  async setCoverImage(bookId: string, imageKey: string) {
+    const b = this.books.find((x) => x.id === bookId);
+    if (!b) return false;
+    b.coverImageKey = imageKey;
+    return true;
+  }
+
+  async audit(adminId: string, action: string, bookId: string, detail: unknown) {
+    this.auditLog.push({ adminId, action, bookId, detail });
   }
 }

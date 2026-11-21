@@ -50,6 +50,75 @@ export interface BookPreview {
   totalPages: number;
   previewPages: number;
   pages: BookPage[];
+  /** 그림 움직임 설정 (관리자가 책마다 정함) */
+  motion: MotionSettings;
+}
+
+// ───── 읽어주기: 목소리·그림 움직임 설정 (관리자 수정) ─────
+
+export type MotionCamera = 'auto' | 'zoomIn' | 'zoomOut' | 'panLeft' | 'panRight' | 'still';
+export type MotionParticles = 'auto' | 'sparkle' | 'snow' | 'none';
+export interface MotionSettings {
+  /** false 면 이 책은 그림을 움직이지 않는다 */
+  enabled: boolean;
+  camera: MotionCamera;
+  particles: MotionParticles;
+}
+export const DEFAULT_MOTION: MotionSettings = { enabled: true, camera: 'auto', particles: 'auto' };
+
+/** 낭독 목소리 선택지 (id 는 audio/voices.json 과 같아야 한다) */
+export const NARRATION_VOICES = [
+  { id: 'narrator', name: '동화 이야기꾼 (여성)' },
+  { id: 'uncle', name: '다정한 아저씨 (남성)' },
+  { id: 'friend', name: '또렷한 친구 (남성)' },
+] as const;
+export type NarrationVoiceId = (typeof NARRATION_VOICES)[number]['id'];
+
+// ───── 관리자 (콘텐츠 수정) ─────
+
+export interface AdminBookSummary {
+  id: string;
+  title: string;
+  coverUrl: string;
+  price: number;
+  status: BookStatus;
+  pageCount: number;
+  categories: Pick<Category, 'id' | 'slug' | 'name'>[];
+}
+
+export interface AdminPage {
+  pageNumber: number;
+  content: string;
+  imageUrl: string;
+}
+
+export interface AdminBookDetail extends AdminBookSummary {
+  description: string;
+  keywords: string[];
+  ageMin: number;
+  ageMax: number;
+  previewPages: number;
+  storeProductId: string | null;
+  narrationVoice: NarrationVoiceId;
+  /** 읽는 속도 보정(%), -30 ~ +30 */
+  narrationRate: number;
+  motion: MotionSettings;
+  pages: AdminPage[];
+}
+
+export interface AdminBookPatch {
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  price?: number;
+  ageMin?: number;
+  ageMax?: number;
+  previewPages?: number;
+  status?: Extract<BookStatus, 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'>;
+  categorySlugs?: string[];
+  narrationVoice?: NarrationVoiceId;
+  narrationRate?: number;
+  motion?: Partial<MotionSettings>;
 }
 
 export interface Paginated<T> {
@@ -82,6 +151,8 @@ export interface Me {
   email: string;
   nickname: string | null;
   createdAt: string;
+  /** 관리자 이메일로 지정된 계정인지 */
+  isAdmin?: boolean;
 }
 
 export interface AuthTokens {

@@ -1,4 +1,7 @@
 import type {
+  AdminBookDetail,
+  AdminBookPatch,
+  AdminBookSummary,
   ApiError,
   AuthTokens,
   BookDetail,
@@ -10,6 +13,7 @@ import type {
   HomeFeed,
   LibraryItem,
   Me,
+  MotionSettings,
   Order,
   Paginated,
   PaymentOptions,
@@ -44,7 +48,7 @@ export class ApiRequestError extends Error {
 /** 서버가 준 상대 주소(/api/v1/assets/...)를 실제 주소로 바꾼다 */
 export const resolveAsset = (url: string) => (!url || /^https?:\/\//.test(url) ? url : `${API_ORIGIN}${url}`);
 
-type Opts = { method?: 'GET' | 'POST' | 'PATCH' | 'DELETE'; body?: unknown; auth?: boolean; parent?: boolean; params?: Record<string, string | number | undefined> };
+type Opts = { method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; body?: unknown; auth?: boolean; parent?: boolean; params?: Record<string, string | number | undefined> };
 
 let refreshing: Promise<boolean> | null = null;
 
@@ -158,5 +162,15 @@ export const api = {
 
   // 서재
   library: () => request<LibraryItem[]>('/library'),
-  ownedPages: (bookId: string) => request<{ title: string; totalPages: number; pages: BookPage[] }>(`/library/${bookId}/pages`),
+  ownedPages: (bookId: string) => request<{ title: string; totalPages: number; pages: BookPage[]; motion: MotionSettings }>(`/library/${bookId}/pages`),
+
+  // 관리자 (콘텐츠 수정) — 서버가 ADMIN_EMAILS 로 한 번 더 확인한다
+  adminBooks: () => request<AdminBookSummary[]>('/admin/books'),
+  adminBook: (id: string) => request<AdminBookDetail>(`/admin/books/${id}`),
+  adminUpdateBook: (id: string, patch: AdminBookPatch) => request<AdminBookDetail>(`/admin/books/${id}`, { method: 'PATCH', body: patch }),
+  adminSetPage: (id: string, page: number, content: string) => request<AdminBookDetail>(`/admin/books/${id}/pages/${page}`, { method: 'PUT', body: { content } }),
+  adminAddPage: (id: string, content: string) => request<AdminBookDetail>(`/admin/books/${id}/pages`, { method: 'POST', body: { content } }),
+  adminRemoveLastPage: (id: string) => request<AdminBookDetail>(`/admin/books/${id}/pages/last`, { method: 'DELETE' }),
+  adminSetPageImage: (id: string, page: number, imageBase64: string) => request<AdminBookDetail>(`/admin/books/${id}/pages/${page}/image`, { method: 'PUT', body: { imageBase64 } }),
+  adminSetCover: (id: string, imageBase64: string) => request<AdminBookDetail>(`/admin/books/${id}/cover`, { method: 'PUT', body: { imageBase64 } }),
 };

@@ -6,6 +6,11 @@ import { CatalogService } from './catalog/catalog.service';
 import { catalogEntities } from './catalog/entities/catalog.entities';
 import { SeedCatalogRepository } from './catalog/seed-catalog.repository';
 import { TypeOrmCatalogRepository } from './catalog/typeorm-catalog.repository';
+import { AdminController, UploadedAssetController } from './admin/admin.controller';
+import { AdminService } from './admin/admin.service';
+import { AssetStorage } from './admin/asset-storage';
+import { NarrationController } from './admin/narration.controller';
+import { AdminGuard } from './auth/admin';
 import { HealthController } from './health.controller';
 import { AuthController } from './auth/auth.controller';
 import { AuthGuard } from './auth/auth.guard';
@@ -45,7 +50,7 @@ export class AppModule {
     return {
       module: AppModule,
       imports,
-      controllers: [HealthController, CatalogController, AuthController, CommerceController, SubscriptionController],
+      controllers: [HealthController, CatalogController, AuthController, CommerceController, SubscriptionController, AdminController, UploadedAssetController, NarrationController],
       providers: [
         CatalogService,
         repo,
@@ -53,6 +58,9 @@ export class AppModule {
         { provide: PAYMENT_PROVIDERS, useValue: providers },
         UsersService,
         AuthGuard,
+        AdminGuard,
+        AdminService,
+        AssetStorage,
         CommerceService,
         SubscriptionService,
         { provide: CLOCK, useValue: clock },

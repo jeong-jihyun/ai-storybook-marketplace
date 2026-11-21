@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import type { BookStatus } from '@storybook/shared-types';
 import { Between, DataSource } from 'typeorm';
-import type { BookQuery, BookRecord, CatalogRepository, CategoryRecord, PageRecord } from './catalog.repository';
+import { normalizeMotion } from '../common/motion-defaults';
+import type { BookPatch, BookQuery, BookRecord, CatalogRepository, CategoryRecord, PageRecord } from './catalog.repository';
 import { BookEntity, BookPageEntity, CategoryEntity } from './entities/catalog.entities';
 
 const toRecord = (b: BookEntity): BookRecord => ({
@@ -21,6 +22,9 @@ const toRecord = (b: BookEntity): BookRecord => ({
   status: b.status as BookStatus,
   publishedAt: b.publishedAt ?? b.createdAt,
   categories: (b.categories ?? []).map((c) => ({ id: c.id, slug: c.slug, name: c.name })),
+  narrationVoice: b.narrationVoice ?? 'narrator',
+  narrationRate: b.narrationRate ?? 0,
+  motion: normalizeMotion(b.motion),
 });
 
 /** PostgreSQL(TypeORM) 카탈로그 저장소 */
@@ -107,5 +111,95 @@ export class TypeOrmCatalogRepository implements CatalogRepository {
       order: { pageNumber: 'ASC' },
     });
     return pages.map((p) => ({ bookId: p.bookId, pageNumber: p.pageNumber, content: p.content, imageKey: p.imageKey ?? '' }));
+  }
+
+  // ── 관리자 ──
+  async listAllBooks() {
+    const books = await this.ds.getRepository(BookEntity).find({ relations: { categories: true }, order: { title: 'ASC' } });
+    return books.map(toRecord);
+  }
+
+  async updateBook(id: string, patch: BookPatch) {
+    return this.ds.transaction(async (m) => {
+      const exists = await m.query('SELECT status, published_at FROM books WHERE id = $1 FOR UPDATE', [id]);
+      if (!exists.length) return null;
+      const cols: Record<string, unknown> = {
+        title: patch.title,
+        description: patch.description,
+        keywords: patch.keywords,
+        price: patch.price,
+        age_min: patch.ageMin,
+        age_max: patch.ageMax,
+        preview_pages: patch.previewPages,
+        status: patch.status,
+        narration_voice: patch.narrationVoice,
+        narration_rate: patch.narrationRate,
+      };
+      const sets: string[] = [];
+      const vals: unknown[] = [];
+      for (const [k, v] of Object.entries(cols)) {
+        if (v === undefined) continue;
+        vals.push(v);
+        sets.push(`${k} = $${vals.length}`);
+      }
+      if (patch.motion) {
+        vals.push(JSON.stringify(patch.motion));
+        sets.push(`motion = $${vals.length}::jsonb`);
+      }
+      if (patch.status === 'PUBLISHED' && !exists[0].published_at) sets.push('published_at = NOW()');
+      sets.push('updated_at = NOW()');
+      vals.push(id);
+      await m.query(`UPDATE books SET ${sets.join(', ')} WHERE id = $${vals.length}`, vals);
+      if (patch.categorySlugs) {
+        await m.query('DELETE FROM book_categories WHERE book_id = $1', [id]);
+        if (patch.categorySlugs.length) {
+          await m.query('INSERT INTO book_categories (book_id, category_id) SELECT $1, id FROM categories WHERE slug = ANY($2)', [id, patch.categorySlugs]);
+        }
+      }
+      const b = await m.getRepository(BookEntity).findOne({ where: { id }, relations: { categories: true } });
+      return b ? toRecord(b) : null;
+    });
+  }
+
+  async setPageContent(bookId: string, pageNumber: number, content: string) {
+    const r = await this.ds.query('UPDATE book_pages SET content = $3, updated_at = NOW() WHERE book_id = $1 AND page_number = $2 RETURNING id', [bookId, pageNumber, content]);
+    return r.length > 0;
+  }
+
+  async addPage(bookId: string, content: string) {
+    return this.ds.transaction(async (m) => {
+      const b = await m.query('SELECT page_count FROM books WHERE id = $1 FOR UPDATE', [bookId]);
+      if (!b.length) return null;
+      const n = Number((await m.query('SELECT COALESCE(MAX(page_number), 0) AS n FROM book_pages WHERE book_id = $1', [bookId]))[0].n) + 1;
+      await m.query("INSERT INTO book_pages (book_id, page_number, content, image_key) VALUES ($1, $2, $3, '')", [bookId, n, content]);
+      await m.query('UPDATE books SET page_count = $2, updated_at = NOW() WHERE id = $1', [bookId, n]);
+      return { bookId, pageNumber: n, content, imageKey: '' };
+    });
+  }
+
+  async removeLastPage(bookId: string) {
+    return this.ds.transaction(async (m) => {
+      const b = await m.query('SELECT 1 FROM books WHERE id = $1 FOR UPDATE', [bookId]);
+      if (!b.length) return null;
+      const n = Number((await m.query('SELECT COALESCE(MAX(page_number), 0) AS n FROM book_pages WHERE book_id = $1', [bookId]))[0].n);
+      if (n <= 1) return null;
+      await m.query('DELETE FROM book_pages WHERE book_id = $1 AND page_number = $2', [bookId, n]);
+      await m.query('UPDATE books SET page_count = $2, preview_pages = LEAST(preview_pages, $2), updated_at = NOW() WHERE id = $1', [bookId, n - 1]);
+      return n;
+    });
+  }
+
+  async setPageImage(bookId: string, pageNumber: number, imageKey: string) {
+    const r = await this.ds.query('UPDATE book_pages SET image_key = $3, updated_at = NOW() WHERE book_id = $1 AND page_number = $2 RETURNING id', [bookId, pageNumber, imageKey]);
+    return r.length > 0;
+  }
+
+  async setCoverImage(bookId: string, imageKey: string) {
+    const r = await this.ds.query('UPDATE books SET cover_image_key = $2, updated_at = NOW() WHERE id = $1 RETURNING id', [bookId, imageKey]);
+    return r.length > 0;
+  }
+
+  async audit(adminId: string, action: string, bookId: string, detail: unknown) {
+    await this.ds.query('INSERT INTO admin_audit_logs (admin_id, action, target_type, target_id, detail) VALUES ($1, $2, $3, $4, $5::jsonb)', [adminId, action, 'BOOK', bookId, JSON.stringify(detail ?? null)]);
   }
 }

@@ -30,6 +30,9 @@ export class BookEntity {
   @Column({ type: 'varchar', length: 20, default: 'DRAFT' }) status: string;
   @Column({ name: 'published_at', type: 'timestamptz', nullable: true }) publishedAt: Date | null;
   @Column({ name: 'created_at', type: 'timestamptz', default: () => 'NOW()' }) createdAt: Date;
+  @Column({ name: 'narration_voice', type: 'varchar', length: 30, default: 'narrator' }) narrationVoice: string;
+  @Column({ name: 'narration_rate', type: 'smallint', default: 0 }) narrationRate: number;
+  @Column({ type: 'jsonb', default: () => "'{}'" }) motion: Record<string, unknown>;
 
   @ManyToMany(() => CategoryEntity)
   @JoinTable({ name: 'book_categories', joinColumn: { name: 'book_id' }, inverseJoinColumn: { name: 'category_id' } })

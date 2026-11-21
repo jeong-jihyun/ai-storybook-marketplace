@@ -80,6 +80,8 @@ export default function RootLayout() {
         <Stack.Screen name="orders" options={{ title: '주문·결제 내역' }} />
         <Stack.Screen name="account" options={{ title: '계정 관리' }} />
         <Stack.Screen name="subscription" options={{ title: '소장권 구독' }} />
+        <Stack.Screen name="admin/index" options={{ title: '동화 관리' }} />
+        <Stack.Screen name="admin/[id]" options={{ title: '동화 고치기' }} />
       </Stack>
     </QueryClientProvider>
   );

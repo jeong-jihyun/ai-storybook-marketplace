@@ -32,6 +32,14 @@ export function hashSeed(s: string): number {
   return h >>> 0;
 }
 
+/**
+ * 음성이 지금 화면의 글과 맞는가. 음성을 만들 때 적어 둔 textHash 와 글의 해시를 비교한다.
+ * textHash 가 없는(옛 매니페스트) 음성은 확인할 수 없으니 그대로 쓴다.
+ */
+export function narrationMatchesText(textHash: number | undefined, text: string | undefined): boolean {
+  return text === undefined || textHash === undefined || textHash === hashSeed(text);
+}
+
 /** 씨앗이 같으면 항상 같은 수열을 주는 난수 (mulberry32) */
 export function seeded(seed: number) {
   let a = seed >>> 0;
@@ -44,7 +52,7 @@ export function seeded(seed: number) {
   };
 }
 
-export type CameraKind = 'zoomIn' | 'zoomOut' | 'panLeft' | 'panRight';
+export type CameraKind = 'zoomIn' | 'zoomOut' | 'panLeft' | 'panRight' | 'still';
 export type ParticleKind = 'sparkle' | 'snow' | 'none';
 
 export interface MotionConfig {
@@ -64,8 +72,29 @@ export interface MotionConfig {
 export const MAX_PARTICLES = 30;
 const CAMERAS: CameraKind[] = ['zoomIn', 'panLeft', 'zoomOut', 'panRight'];
 
-/** 책 id + 쪽 번호로 그 쪽의 모션을 정한다 (항상 같은 결과) */
-export function motionFor(bookId: string, pageNumber: number): MotionConfig {
+/** 관리자가 책마다 정하는 움직임 설정 (packages/shared-types MotionSettings 와 같은 모양) */
+export interface MotionOverride {
+  enabled: boolean;
+  camera: 'auto' | CameraKind;
+  particles: 'auto' | ParticleKind;
+}
+
+/**
+ * 책 id + 쪽 번호로 그 쪽의 모션을 정한다 (항상 같은 결과).
+ * override: 관리자 설정. enabled=false 면 그림을 움직이지 않고, 'auto' 가 아닌 값은 그 값으로 고정한다.
+ */
+export function motionFor(bookId: string, pageNumber: number, override?: MotionOverride): MotionConfig {
+  const base = baseMotion(bookId, pageNumber);
+  if (!override) return base;
+  if (!override.enabled) return { ...base, camera: 'still', floatAmp: 0, swayDeg: 0, particles: 'none', particleCount: 0 };
+  return {
+    ...base,
+    camera: override.camera === 'auto' ? base.camera : override.camera,
+    particles: override.particles === 'auto' ? base.particles : override.particles,
+  };
+}
+
+function baseMotion(bookId: string, pageNumber: number): MotionConfig {
   const seed = hashSeed(`${bookId}:${pageNumber}`);
   const rnd = seeded(seed);
   // 쪽을 넘길 때마다 카메라가 번갈아 달라지게 (같은 책 안에서 연속 두 쪽이 같은 움직임이 되지 않게)

@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
-import { cameraAt, motionFor, particlesAt } from '../motion/engine';
+import { cameraAt, motionFor, particlesAt, type MotionOverride } from '../motion/engine';
 import { colors, radius } from '../theme';
 
 type Subscribe = (l: (t: number) => void) => () => void;
@@ -36,6 +36,7 @@ export function StoryArt({
   subscribe,
   getTime,
   label,
+  motion,
 }: {
   uri: string;
   bookId: string;
@@ -48,9 +49,11 @@ export function StoryArt({
   subscribe: Subscribe;
   getTime: () => number;
   label: string;
+  /** 관리자가 정한 이 책의 움직임 설정 (없으면 자동) */
+  motion?: MotionOverride;
 }) {
   const t = useClock(subscribe, getTime, active);
-  const cfg = useRef(motionFor(bookId, pageNumber)).current;
+  const cfg = useMemo(() => motionFor(bookId, pageNumber, motion), [bookId, pageNumber, motion?.enabled, motion?.camera, motion?.particles]); // eslint-disable-line react-hooks/exhaustive-deps
   const cam = cameraAt(cfg, t, duration, reduced);
   const ps = active ? particlesAt(cfg, t, reduced) : [];
 

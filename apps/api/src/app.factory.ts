@@ -24,6 +24,8 @@ export async function createApp(options: { databaseUrl?: string; logger?: boolea
     logger: options.logger === false ? false : ['error', 'warn', 'log'],
   });
   app.enableCors({ origin: true });
+  // 관리자 그림 업로드(base64)를 받기 위해 본문 한도를 올린다 (Vercel 자체 한도 4.5MB 이내)
+  app.useBodyParser('json', { limit: '5mb' });
   app.disable('x-powered-by');
   app.use(ASSET_PREFIX, express.static(storageDir(), { maxAge: '7d', immutable: true }));
   app.setGlobalPrefix('api/v1');

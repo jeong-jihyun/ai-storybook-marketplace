@@ -43,7 +43,13 @@
         }
       ],
       "expo-image",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "관리자가 동화 그림을 바꾸려고 사진을 골라요."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

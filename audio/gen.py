@@ -1,17 +1,25 @@
-"""동화 본문(apps/api/src/seed/storybooks.json)을 페이지별 낭독 MP3로 만든다.
+"""동화 본문을 페이지별 낭독 MP3로 만든다.
+
+본문 가져오기
+- NARRATION_API + NARRATION_TOKEN 이 있으면 서비스 서버(/api/v1/narration/source)에서 가져온다
+  → 관리자가 앱에서 고친 글·목소리·속도가 그대로 반영된다.
+- 없으면 apps/api/src/seed/storybooks.json (처음 시드 본문)을 쓴다.
 
 결과
 - audio/files/<bookId>/page-NN.mp3  : 페이지마다 1개
-- audio/manifest.json               : 책 -> 페이지 -> {file, duration, cues[{start,end,text}]}
+- audio/manifest.json               : 책 -> 페이지 -> {file, duration, hash, textHash, cues[{start,end,text}]}
   cues 는 자막 맞추기용(문장 시작/끝 초). edge-tts의 문장 경계 값을 쓰고, 없으면 글자 수 비율로 나눈다.
+  textHash 는 본문 글자의 FNV-1a 값 — 앱이 화면의 글과 비교해, 글이 고쳐졌는데 음성이 옛것이면 쓰지 않는다.
 
 사용법
   python audio/gen.py          # 실제 음성 생성 (인터넷 필요, 바뀐 페이지만)
   python audio/gen.py --mock   # 음성 대신 신호음으로 구조만 시험 (인터넷 불필요)
-  python audio/gen.py --check  # 만들지 않고 매니페스트가 시드와 맞는지만 검사
+  python audio/gen.py --check  # 만들지 않고 매니페스트가 본문과 맞는지만 검사 (맞지 않으면 종료코드 1)
+  python audio/gen.py --seed   # API 가 있어도 시드 본문 사용
+환경변수 GEN_REQUIRE_API=1 이면 API 정보가 없을 때 아무것도 하지 않고 끝낸다(주기 실행이 시드로 덮어쓰지 않게).
 바뀐 페이지만 다시 만든다(본문 + 목소리 설정 해시).
 """
-import asyncio, hashlib, json, os, re, subprocess, sys, tempfile
+import asyncio, hashlib, json, os, re, subprocess, sys, tempfile, urllib.request
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(ROOT)
@@ -19,13 +27,15 @@ SEED = os.path.join(REPO, "apps", "api", "src", "seed", "storybooks.json")
 OUT = os.path.join(ROOT, "files")
 MANIFEST = os.path.join(ROOT, "manifest.json")
 VOICES = json.load(open(os.path.join(ROOT, "voices.json"), encoding="utf-8"))
-VOICE = next(v for v in VOICES["voices"] if v["id"] == VOICES["default"])
+VOICE_BY_ID = {v["id"]: v for v in VOICES["voices"]}
+DEFAULT_VOICE = VOICE_BY_ID[VOICES["default"]]
 
-GEN_VERSION = "1"          # 생성 방식이 바뀌면 올려서 전부 다시 만든다
+GEN_VERSION = "2"          # 생성 방식이 바뀌면 올려서 전부 다시 만든다
 LEAD_IN = 0.35             # 페이지가 넘어가고 목소리가 시작하기 전 짧은 쉼(초)
 TAIL = 0.6                 # 끝 쉼(초)
 MOCK = "--mock" in sys.argv
 CHECK = "--check" in sys.argv
+SEED_ONLY = "--seed" in sys.argv
 
 
 def sh(*args):
@@ -38,9 +48,26 @@ def dur(path):
     return float(out.stdout.strip())
 
 
-def page_hash(text):
-    key = json.dumps([GEN_VERSION, VOICE["engine"], VOICE["pitch"], VOICE["rate"], text], ensure_ascii=False)
+def voice_of(book):
+    """책의 목소리 설정 → edge-tts 값 (알 수 없는 id 는 기본 목소리)"""
+    base = VOICE_BY_ID.get(book.get("voice") or "", DEFAULT_VOICE)
+    rate = max(-50, min(50, int(base["rate"]) + int(book.get("rate") or 0)))
+    return {"engine": base["engine"], "pitch": int(base["pitch"]), "rate": rate}
+
+
+def page_hash(text, voice):
+    key = json.dumps([GEN_VERSION, voice["engine"], voice["pitch"], voice["rate"], text], ensure_ascii=False)
     return hashlib.sha1(key.encode()).hexdigest()[:12]
+
+
+def text_hash(text):
+    """앱(TypeScript hashSeed)과 같은 값: FNV-1a 32비트, 글자는 UTF-16 코드 단위로"""
+    h = 2166136261
+    b = text.encode("utf-16-le")
+    for i in range(0, len(b), 2):
+        h ^= b[i] | (b[i + 1] << 8)
+        h = (h * 16777619) & 0xFFFFFFFF
+    return h
 
 
 def split_sentences(text):
@@ -61,7 +88,7 @@ def proportional_cues(text, total, lead):
     return cues
 
 
-async def synth(text, raw_mp3):
+async def synth(text, raw_mp3, voice):
     """edge-tts로 말하고 (문장 경계 목록)을 돌려준다. 시간 단위는 초."""
     if MOCK:
         secs = max(1.5, len(text) * 0.09)
@@ -72,8 +99,8 @@ async def synth(text, raw_mp3):
     last = None
     for attempt in range(4):
         try:
-            com = edge_tts.Communicate(text, VOICE["engine"], rate=f"{VOICE['rate']:+d}%",
-                                       pitch=f"{VOICE['pitch']:+d}Hz", boundary="SentenceBoundary")
+            com = edge_tts.Communicate(text, voice["engine"], rate=f"{voice['rate']:+d}%",
+                                       pitch=f"{voice['pitch']:+d}Hz", boundary="SentenceBoundary")
             bounds = []
             with open(raw_mp3, "wb") as f:
                 async for ch in com.stream():
@@ -89,12 +116,12 @@ async def synth(text, raw_mp3):
     raise last
 
 
-async def make_page(text, dst):
+async def make_page(text, dst, voice):
     """한 페이지 MP3와 자막 큐를 만든다."""
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
         raw = os.path.join(tmp, "raw.mp3")
-        bounds = await synth(text, raw)
+        bounds = await synth(text, raw, voice)
         # 앞뒤에 짧은 쉼을 붙이고 소리 크기를 고르게 맞춘 뒤 MP3로 저장
         sh("ffmpeg", "-y", "-i", raw,
            "-af", f"adelay={int(LEAD_IN * 1000)}:all=1,apad=pad_dur={TAIL},loudnorm=I=-18:TP=-2:LRA=11",
@@ -114,50 +141,92 @@ async def make_page(text, dst):
 def load_manifest():
     if os.path.exists(MANIFEST):
         return json.load(open(MANIFEST, encoding="utf-8"))
-    return {"version": 1, "voice": VOICE["engine"], "books": {}}
+    return {"version": 2, "books": {}}
 
 
-def expected():
+def fetch_source():
+    """(책 목록, 출처 이름). 책: {id, voice, rate, pages[]}"""
+    api, token = os.environ.get("NARRATION_API", "").strip(), os.environ.get("NARRATION_TOKEN", "").strip()
+    if api and token and not SEED_ONLY:
+        req = urllib.request.Request(api, headers={"x-narration-token": token, "User-Agent": "storybook-voice"})
+        last = None
+        for attempt in range(4):
+            try:
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    data = json.loads(r.read().decode("utf-8"))
+                return data["books"], "서비스 서버"
+            except Exception as e:  # 서버가 잠깐 안 될 때 대비
+                last = e
+                print("  본문 가져오기 다시 시도:", e)
+                import time
+                time.sleep(3 + attempt * 3)
+        raise SystemExit(f"본문을 가져오지 못했어요: {last}")
+    if os.environ.get("GEN_REQUIRE_API") == "1" and not SEED_ONLY:
+        print("NARRATION_API/NARRATION_TOKEN 이 없어 건너뜀 (시드로 덮어쓰지 않음)")
+        sys.exit(0)
     books = json.load(open(SEED, encoding="utf-8"))["books"]
-    return {b["id"]: b["pages"] for b in books}
+    return [{"id": b["id"], "voice": "narrator", "rate": 0, "pages": b["pages"]} for b in books], "시드 파일"
+
+
+def is_stale(entry, text, voice):
+    return not entry or entry.get("hash") != page_hash(text, voice) or entry.get("textHash") != text_hash(text)
+
+
+def stale_pages(books, man):
+    out = []
+    for b in books:
+        voice = voice_of(b)
+        have = man["books"].get(b["id"], {}).get("pages", {})
+        for i, text in enumerate(b["pages"], 1):
+            e = have.get(str(i))
+            if is_stale(e, text, voice) or not os.path.exists(os.path.join(ROOT, e["file"])):
+                out.append((b["id"], i))
+    return out
 
 
 async def main():
-    want = expected()
+    books, origin = fetch_source()
     man = load_manifest()
     if CHECK:
-        bad = 0
-        for bid, pages in want.items():
-            have = man["books"].get(bid, {}).get("pages", {})
-            for i, text in enumerate(pages, 1):
-                e = have.get(str(i))
-                if not e or e["hash"] != page_hash(text) or not os.path.exists(os.path.join(ROOT, e["file"])):
-                    print("없음/오래됨:", bid, i)
-                    bad += 1
-        print("검사 끝, 문제", bad, "개")
-        sys.exit(1 if bad else 0)
+        bad = stale_pages(books, man)
+        extra = [bid for bid in man["books"] if bid not in {b["id"] for b in books}]
+        for bid, i in bad:
+            print("없음/오래됨:", bid, i)
+        print(f"검사 끝({origin}), 새로 만들 쪽 {len(bad)}개, 지울 책 {len(extra)}권")
+        sys.exit(1 if bad or extra else 0)
 
-    man["voice"] = VOICE["engine"]
+    print("본문 출처:", origin, f"({len(books)}권)")
+    man["version"] = 2
+    man.pop("voice", None)
     made = 0
-    for bid, pages in want.items():
+    for b in books:
+        bid, voice = b["id"], voice_of(b)
         book = man["books"].setdefault(bid, {"pages": {}})
-        for i, text in enumerate(pages, 1):
-            h = page_hash(text)
+        book["voice"] = voice["engine"]
+        for i, text in enumerate(b["pages"], 1):
             rel = f"files/{bid}/page-{i:02d}.mp3"
             old = book["pages"].get(str(i))
-            if old and old["hash"] == h and os.path.exists(os.path.join(ROOT, rel)) and not MOCK:
+            if not is_stale(old, text, voice) and os.path.exists(os.path.join(ROOT, rel)) and not MOCK:
                 continue
             print(f"만드는 중: {bid[-2:]} 책 {i}쪽", flush=True)
-            total, cues = await make_page(text, os.path.join(ROOT, rel))
-            book["pages"][str(i)] = {"file": rel, "duration": total, "hash": h, "cues": cues}
+            total, cues = await make_page(text, os.path.join(ROOT, rel), voice)
+            book["pages"][str(i)] = {"file": rel, "duration": total, "hash": page_hash(text, voice), "textHash": text_hash(text), "cues": cues}
             made += 1
-        # 시드에서 사라진 페이지 정리
-        for k in list(book["pages"]):
-            if int(k) > len(pages):
+        for k in list(book["pages"]):  # 줄어든 쪽 정리
+            if int(k) > len(b["pages"]):
                 del book["pages"][k]
+    keep = {b["id"] for b in books}
     for bid in list(man["books"]):
-        if bid not in want:
+        if bid not in keep:
             del man["books"][bid]
+    # 쓰이지 않는 mp3 파일 정리 (책이 내려갔거나 쪽이 줄었을 때)
+    used = {e["file"] for bk in man["books"].values() for e in bk["pages"].values()}
+    for dp, _dn, fns in os.walk(OUT):
+        for fn in fns:
+            rel = os.path.relpath(os.path.join(dp, fn), ROOT).replace(os.sep, "/")
+            if fn.endswith(".mp3") and rel not in used:
+                os.remove(os.path.join(dp, fn))
+                print("지움:", rel)
     json.dump(man, open(MANIFEST, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("완료: 새로 만든", made, "쪽, 전체", sum(len(b["pages"]) for b in man["books"].values()), "쪽")
 

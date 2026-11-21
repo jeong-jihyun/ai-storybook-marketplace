@@ -1,4 +1,4 @@
-import type { BookSort, BookStatus } from '@storybook/shared-types';
+import type { BookSort, BookStatus, MotionSettings } from '@storybook/shared-types';
 
 /** 저장소(DB 또는 시드 데이터)에서 꺼낸 카테고리 한 건 */
 export interface CategoryRecord {
@@ -28,6 +28,27 @@ export interface BookRecord {
   status: BookStatus;
   publishedAt: Date;
   categories: { id: string; slug: string; name: string }[];
+  /** 낭독 목소리(id)·속도 보정(%) — 음성 자동 생성이 읽는다 */
+  narrationVoice: string;
+  narrationRate: number;
+  /** 그림 움직임 설정 */
+  motion: MotionSettings;
+}
+
+/** 관리자가 책 한 권에서 바꿀 수 있는 값 (넘긴 것만 바뀜) */
+export interface BookPatch {
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  price?: number;
+  ageMin?: number;
+  ageMax?: number;
+  previewPages?: number;
+  status?: BookStatus;
+  categorySlugs?: string[];
+  narrationVoice?: string;
+  narrationRate?: number;
+  motion?: MotionSettings;
 }
 
 export interface PageRecord {
@@ -58,6 +79,19 @@ export interface CatalogRepository {
   findBookById(id: string): Promise<BookRecord | null>;
   findBookByProductId(productId: string): Promise<BookRecord | null>;
   findPages(bookId: string, fromPage: number, toPage: number): Promise<PageRecord[]>;
+
+  // ── 관리자 ──
+  /** 모든 상태의 책 (최근 수정 순서가 아니라 제목순) */
+  listAllBooks(): Promise<BookRecord[]>;
+  updateBook(id: string, patch: BookPatch): Promise<BookRecord | null>;
+  setPageContent(bookId: string, pageNumber: number, content: string): Promise<boolean>;
+  /** 맨 뒤에 새 쪽 추가. 책이 없으면 null */
+  addPage(bookId: string, content: string): Promise<PageRecord | null>;
+  /** 맨 뒤 쪽 삭제. 지운 쪽 번호, 못 지우면 null */
+  removeLastPage(bookId: string): Promise<number | null>;
+  setPageImage(bookId: string, pageNumber: number, imageKey: string): Promise<boolean>;
+  setCoverImage(bookId: string, imageKey: string): Promise<boolean>;
+  audit(adminId: string, action: string, bookId: string, detail: unknown): Promise<void>;
 }
 
 export const CATALOG_REPOSITORY = Symbol('CATALOG_REPOSITORY');

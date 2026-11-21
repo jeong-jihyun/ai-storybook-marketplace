@@ -53,6 +53,7 @@ export default function ReadScreen() {
         totalPages={q.data.totalPages}
         caption={() => ''}
         endLabel="끝"
+        motion={q.data.motion}
         endCard={
           <>
             <Text style={{ fontSize: 56 }}>🌟</Text>

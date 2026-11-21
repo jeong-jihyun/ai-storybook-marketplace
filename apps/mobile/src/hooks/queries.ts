@@ -66,3 +66,7 @@ export const useMySubscription = () => {
   const uid = useUserId();
   return useQuery({ queryKey: ['subscription', uid], queryFn: async () => (await api.mySubscription()).subscription, enabled: uid !== 'guest' });
 };
+
+// ───── 관리자 ─────
+export const useAdminBooks = () => useQuery({ queryKey: ['admin-books'], queryFn: api.adminBooks, staleTime: 0 });
+export const useAdminBook = (id: string) => useQuery({ queryKey: ['admin-book', id], queryFn: () => api.adminBook(id), enabled: !!id, staleTime: 0 });

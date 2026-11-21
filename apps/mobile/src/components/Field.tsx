@@ -14,7 +14,7 @@ export function Field({ label, error, hint, secure, ...rest }: TextInputProps & 
           {...rest}
           secureTextEntry={secure && !show}
           placeholderTextColor={colors.inkMute}
-          style={styles.input}
+          style={[styles.input, rest.multiline && styles.multi]}
           accessibilityLabel={label}
           autoCapitalize="none"
           autoCorrect={false}
@@ -62,5 +62,6 @@ const styles = StyleSheet.create({
     gap: space.sm,
   },
   input: { flex: 1, minWidth: 0, fontFamily: fonts.body, fontSize: 16, color: colors.ink, paddingVertical: 12, outlineStyle: 'none' } as object,
+  multi: { minHeight: 120, textAlignVertical: 'top' },
   check: { flexDirection: 'row', gap: space.md, alignItems: 'flex-start', minHeight: MIN_TOUCH, paddingVertical: 4 },
 });

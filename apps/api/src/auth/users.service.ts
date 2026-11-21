@@ -1,5 +1,6 @@
 import { ConflictException, ForbiddenException, HttpException, HttpStatus, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { COMMERCE_STORE, type CommerceStore, type UserRecord } from '../commerce/commerce.store';
+import { isAdminEmail } from './admin';
 import { hashSecret, signToken, verifySecret, verifyToken } from './crypto';
 
 export const ACCESS_TTL = 30 * 60; // 30분
@@ -14,6 +15,7 @@ export interface MeDto {
   email: string;
   nickname: string | null;
   createdAt: string;
+  isAdmin: boolean;
 }
 
 /** 회원·인증·보호자 확인 */
@@ -25,7 +27,7 @@ export class UsersService {
   constructor(@Inject(COMMERCE_STORE) private readonly store: CommerceStore) {}
 
   toMe(u: UserRecord): MeDto {
-    return { id: u.id, email: u.email, nickname: u.nickname, createdAt: u.createdAt.toISOString() };
+    return { id: u.id, email: u.email, nickname: u.nickname, createdAt: u.createdAt.toISOString(), isAdmin: isAdminEmail(u.email) };
   }
 
   async findActiveById(id: string) {

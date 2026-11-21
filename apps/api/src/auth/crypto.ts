@@ -9,7 +9,9 @@ const scrypt = promisify(scryptCb) as (pw: string, salt: Buffer, len: number) =>
  * 둘 다 없으면 개발용 고정값 — 로컬·테스트 전용.
  */
 export function signingKey(): Buffer {
-  const base = process.env.JWT_SECRET || (process.env.DATABASE_URL ? `db:${process.env.DATABASE_URL}` : 'dev-only-storybook-secret');
+  // Supabase-Vercel 연결이 넣어 주는 SUPABASE_JWT_SECRET 은 DB 비밀번호가 바뀌어도 그대로라 로그인이 풀리지 않는다
+  const db = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+  const base = process.env.JWT_SECRET || process.env.SUPABASE_JWT_SECRET || (db ? `db:${db}` : 'dev-only-storybook-secret');
   return createHash('sha256').update(`storybook-jwt|${base}`).digest();
 }
 

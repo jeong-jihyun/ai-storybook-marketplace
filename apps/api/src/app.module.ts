@@ -19,6 +19,7 @@ import type { PaymentProvider } from './commerce/providers/payment-provider';
 import { SubscriptionController } from './commerce/subscription.controller';
 import { SubscriptionService } from './commerce/subscription.service';
 import { CLOCK, systemClock, type Clock } from './common/clock';
+import { resolveDatabaseUrl, sslOption } from './common/database-url';
 
 /**
  * DATABASE_URL 이 있으면 PostgreSQL, 없으면 시드 데이터로 동작한다.
@@ -26,7 +27,7 @@ import { CLOCK, systemClock, type Clock } from './common/clock';
  */
 @Module({})
 export class AppModule {
-  static register(databaseUrl = process.env.DATABASE_URL, providers: PaymentProvider[] = defaultProviders(), clock: Clock = systemClock): DynamicModule {
+  static register(databaseUrl = resolveDatabaseUrl(), providers: PaymentProvider[] = defaultProviders(), clock: Clock = systemClock): DynamicModule {
     const imports = databaseUrl
       ? [
           TypeOrmModule.forRoot({
@@ -34,7 +35,7 @@ export class AppModule {
             url: databaseUrl,
             entities: catalogEntities,
             synchronize: false,
-            ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
+            ssl: sslOption(databaseUrl),
             // 서버리스(Vercel)는 인스턴스가 여러 개 뜨므로 인스턴스당 연결을 적게 (Supabase 무료 연결 수 보호)
             extra: { max: Number(process.env.DATABASE_POOL_MAX ?? 3), idleTimeoutMillis: 10_000 },
           }),

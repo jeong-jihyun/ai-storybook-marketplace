@@ -11,6 +11,7 @@ import { ASSET_PREFIX } from './common/asset-url';
 import { AllExceptionsFilter } from './common/http-exception.filter';
 import type { PaymentProvider } from './commerce/providers/payment-provider';
 import type { Clock } from './common/clock';
+import { resolveDatabaseUrl } from './common/database-url';
 
 /** storage 폴더 위치 (로컬 Object Storage 대용) */
 export function storageDir(): string {
@@ -19,7 +20,7 @@ export function storageDir(): string {
 }
 
 export async function createApp(options: { databaseUrl?: string; logger?: boolean; providers?: PaymentProvider[]; clock?: Clock } = {}): Promise<INestApplication> {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule.register(options.databaseUrl ?? process.env.DATABASE_URL, options.providers, options.clock), {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule.register(options.databaseUrl ?? resolveDatabaseUrl(), options.providers, options.clock), {
     logger: options.logger === false ? false : ['error', 'warn', 'log'],
   });
   app.enableCors({ origin: true });
